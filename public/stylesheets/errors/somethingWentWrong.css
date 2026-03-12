@@ -1,0 +1,176 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-color: #0e0e0e;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #1e1f20;
+    overflow: auto;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #1e1f20;
+}
+
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 160vh;
+    padding: 10px 3rem;
+    height: 75vh;
+    background-color: #0e0e0e;
+    border-radius: 30px;
+}
+
+.login-container a {
+    text-decoration: none;
+}
+
+.login-container {
+    font-size: 0.85rem;
+    color: aliceblue
+}
+
+.login-container-content {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 25px;
+    height: 80%;
+    width: 100%;
+}
+
+.login-container-content-header {
+    width: 55%;
+}
+
+
+.login-header-titles {
+    background-color: transparent;
+    position: relative;
+    top: 25px;
+}
+
+.login-header-signin-title {
+    font-size: 2.2rem;
+    font-weight: light;
+    margin-bottom: 25px;
+}
+
+.login-header-continue-title {
+    font-size: 1rem;
+    font-weight: light;
+}
+
+.g-wrap {
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+}
+
+.login-container-content-form {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+
+.login-container-content-form-nav {
+    display: flex;
+    border-radius: 30px;
+    align-items: end;
+    justify-content: end;
+    width: 100%;
+    position: relative;
+    top: -10px;
+
+}
+
+.login-container-content-form-nav a {
+    border: none;
+    font-size: 0.9rem;
+    border-radius: 30px;
+    cursor: pointer;
+}
+
+
+
+
+
+.try-btn {
+    background-color: #8fc7fa;
+    color: #062e6f;
+    padding: 10px 20px;
+}
+
+.login-footer {
+    margin-top: 20px;
+    background-color: #1e1f20;
+    padding: 0 1rem;
+    color: #3e4140;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.language-selector {
+    background-color: transparent;
+    color: #3e4140;
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 2px 10px;
+    border-radius: 10px;
+}
+
+.language-selector select {
+    color: aliceblue;
+    height: 20px;
+    width: 200px;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.language-selector select option {
+    background-color: #3e4140;
+    color: aliceblue;
+}
+
+.language-selector:hover {
+    background-color: #3e4140
+}
+
+.login-footer-links {
+    background-color: #1e1f20;
+}
+
+.login-footer-links a {
+    background-color: #1e1f20;
+    color: aliceblue;
+    margin-right: 10px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 2px 10px;
+}
+
+.login-footer-links a:hover {
+    background-color: #3e4140
+}

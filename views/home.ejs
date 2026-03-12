@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Google-style Bar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/tippy.js@6/animations/scale.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/partials/header.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/L-sidebar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/R-sidebar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/composeBtn.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/optionBar.css" />
+    <link rel="stylesheet" href="/stylesheets/home.css" />
+    <link rel="stylesheet" href="/stylesheets/tippy.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/progressBar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/renamePopup.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/newFolderPopup.css" />
+    <link rel="stylesheet" href="/stylesheets/tippy.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/loader.css" />
+
+
+    <link
+      rel="stylesheet"
+      href="/stylesheets/partials/moreActionDropdown.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/filePreview.css" />
+
+  </head>
+
+  <body>
+    <%- include('partials/header.ejs') %> <%-
+    include('partials/renamePopup.ejs') %> <%-
+    include('partials/newFolderPopup.ejs') %>
+    <%- include('filePreview.ejs') %>
+
+    <div class="" style="display: flex">
+      <%- include('partials/L-sidebar.ejs',{path:path}) %>
+
+      <main>
+        <%- include('partials/progressbar.ejs') %>
+        <div class="main-container">
+          <div class="main-header">
+            <p><span>Welcome to Drive</span></p>
+          </div>
+          <div class="content-container">
+            <%- include('partials/optionBar.ejs') %> <%-
+            include('partials/moreActionDropdown.ejs') %>
+
+            <div class="sugg-fold sugg">
+              <div class="sugg-fold-btn sugg-btn-div">
+                <button
+                  class="chevron-btn sugg-btn sugg-hover"
+                  data-toggle-class="sugg-fold-hide"
+                >
+                  <svg
+                    class="sugg-fold-chevron sugg-chevron chevron-down-right"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M7.41 8.59 12 13.17 16.59 8.59 18 10l-6 6-6-6z" />
+                  </svg>
+                  <span>Suggested folders</span>
+                </button>
+              </div>
+              <ul class="sugg-fold-list sugg-fold-hide">
+
+              </ul>
+            </div>
+            <div class="sugg-file sugg">
+              <div class="sugg-file-btn sugg-btn-div">
+                <button
+                  class="chevron-btn sugg-btn sugg-hover"
+                  data-toggle-class="sugg-file-hide"
+                >
+                  <svg
+                    class="sugg-fold-chevron sugg-chevron chevron-down-right"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M7.41 8.59 12 13.17 16.59 8.59 18 10l-6 6-6-6z" />
+                  </svg>
+                  <span>Suggested files</span>
+                </button>
+              </div>
+              <div class="sugg-file-container file-container sugg-file-hide">
+                <div class="sugg-file-container-header file-container-header">
+                  <P
+                    class="sugg-file-container-header-title file-container-header-title file-name-title"
+                    ><span>Name</span></P
+                  >
+                  <P
+                    class="sugg-file-container-header-title file-container-header-title file-reason-title"
+                    ><span>Reason suggested</span></P
+                  >
+                  <P
+                    class="sugg-file-container-header-title file-container-header-title file-location-title"
+                    ><span>Location</span></P
+                  >
+                </div>
+                <div class="sugg-file-container-content file-content-container">
+                  <ul class="sugg-file-list file-container-list">
+
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-spam empty-container empty-container-state none">
+          <img
+            src="https://ssl.gstatic.com/docs/doclist/images/empty_state_home.svg"
+            alt="Empty Spam Illustration"
+          />
+          <h2>Your spam is empty</h2>
+          <p>
+            Drag your files and folders here or use the 'New' button to upload
+          </p>
+        </div>
+      </main>
+      <%- include('partials/R-sidebar.ejs') %>
+    </div>
+    <script src="/javascripts/homeManager.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="/javascripts/tippy-init.js"></script>
+    <script src="/javascripts/dropdown.js"></script>
+    <script src="/javascripts/partials/L-sidebar.js"></script>
+    <script src="/javascripts/partials/R-sidebar.js"></script>
+    <script src="/javascripts/partials/composeBtn.js"></script>
+    <script src="/javascripts/chevron.js"></script>
+    <script src="/javascripts/fileIcons.js"></script>
+    <script src="/javascripts/renderFileItem.js"></script>
+    <script src="/javascripts/progressBar.js"></script>
+    <script src="/javascripts/uploadHandler.js"></script>
+    <script src="/javascripts/selection/selectionStore.js"></script>
+    <script src="/javascripts/selection/selectionUi.js"></script>
+    <script src="/javascripts/selection/selectionController.js"></script>
+    <script src="/javascripts/partials/renamePopup.js"></script>
+    <script src="/javascripts/menu/menuActionHandler.js"></script>
+    <script src="/javascripts/menu/menuActions.js"></script>
+    <script src="/javascripts/menu/contextMenu.js"></script>
+    <script src="/javascripts/menu/dotsMenu.js"></script>
+    <script src="/javascripts/menu/optionBar.js"></script>
+    <script src="/javascripts/menu/menuPolicy.js"></script>
+    <script src="/javascripts/menu/menuPopper.js"></script>
+    <script src="/javascripts/menu/optionBarMenu.js"></script>
+    <script src="/javascripts/partials/search.js"></script>
+    <script src="/javascripts/filePreview.js"></script>
+
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Storage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content="<%= csrfToken %>" />
+      <link
+      rel="stylesheet"
+      href="https://unpkg.com/tippy.js@6/animations/scale.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/storage.css" />
+
+    <link rel="stylesheet" href="/stylesheets/partials/driveFilterBar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/header.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/L-sidebar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/R-sidebar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/composeBtn.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/optionBar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/progressBar.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/renamePopup.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/newFolderPopup.css" />
+    <link rel="stylesheet" href="/stylesheets/tippy.css" />
+    <link rel="stylesheet" href="/stylesheets/dropdown.css" />
+    <link rel="stylesheet" href="/stylesheets/partials/loader.css" />
+
+    <link
+      rel="stylesheet"
+      href="/stylesheets/partials/moreActionDropdown.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/filePreview.css" />
+  </head>
+
+  <body>
+    <%- include('partials/loader.ejs') %>
+    <%- include('partials/header.ejs') %>
+   <%- include('partials/renamePopup.ejs') %> 
+   <%- include('partials/newFolderPopup.ejs') %>
+   <%- include('filePreview.ejs') %>
+    <div class="" style="display: flex">
+      <%- include('partials/L-sidebar.ejs',{path:path}) %>
+
+      <main>
+        <%- include('partials/progressbar.ejs') %>
+
+        <div class="main-container">
+          <div class="main-header">
+            <p><span>Storage</span></p>
+          </div>
+          <div class="content-container">
+            <%- include('partials/driveFilterBar.ejs') %> <%-
+            include('partials/optionBar.ejs') %> <%-
+            include('partials/moreActionDropdown.ejs') %>
+            <div class="drive-file-container file-container">
+              <div class="file-container-header">
+                <div class="file-container-header-title file-name-title hover">
+                  <span>Name</span>
+                  <svg viewBox="0 -960 960 960">
+                    <path
+                      d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"
+                    ></path>
+                  </svg>
+                </div>
+
+                <div class="file-container-header-title file-owner-title">
+                  <span>Owner</span>
+                </div>
+                <div
+                  class="file-container-header-title file-date-modified-title hover"
+                >
+                  <span>Date modified</span>
+                  <svg viewBox="0 -960 960 960">
+                    <path
+                      d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"
+                    ></path>
+                  </svg>
+                </div>
+                <div class="file-container-header-title file-size-title">
+                  <span>File size</span>
+                </div>
+                <div
+                  class="file-container-header-title file-container-filter dropdown-trigger"
+                  data-menu="fileContainerFilterMenu"
+                  data-placement="bottom-end"
+                  data-tooltip="View sort options"
+                >
+                  <svg viewBox="0 -960 960 960">
+                    <path
+                      d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"
+                    ></path>
+                  </svg>
+                </div>
+                <div
+                  class="file-container-filter-menu dropdown-menu"
+                  id="fileContainerFilterMenu"
+                  role="menu"
+                >
+                  <p class="file-container-filter-menu-title">
+                    <span>Sort by</span>
+                  </p>
+                  <hr />
+                  <ul class="file-container-filter-menu-options-list">
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Name</span></p>
+                    </li>
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Date modified</span></p>
+                    </li>
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Date modified by me</span></p>
+                    </li>
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Date opened by me</span></p>
+                    </li>
+                  </ul>
+                  <hr />
+                  <p class="file-container-filter-menu-title">
+                    <span>Sort directions</span>
+                  </p>
+                  <ul class="file-container-filter-menu-options-list">
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>A to Z</span></p>
+                    </li>
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Z to A</span></p>
+                    </li>
+                  </ul>
+                  <hr />
+                  <p class="file-container-filter-menu-title">
+                    <span>Folders</span>
+                  </p>
+
+                  <ul class="file-container-filter-menu-options-list">
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>On top</span></p>
+                    </li>
+                    <li class="file-container-filter-option" role="menuitem">
+                      <p><span>Mixed with files</span></p>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="file-content-container">
+                <ul class="file-container-list"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="empty-storage empty-container empty-container-state">
+          <img
+            src="https://ssl.gstatic.com/docs/doclist/images/empty_state_storage_v2.svg"
+            alt="Empty Spam Illustration"
+          />
+          <h2>No files are using storage</h2>
+          <p>Items you own will Drive storage</p>
+        </div>
+      </main>
+
+      <%- include('partials/R-sidebar.ejs') %>
+    </div>
+   
+    <script src="/javascripts/partials/driveFilterBar.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="/javascripts/tippy-init.js"></script>
+    <script src="/javascripts/dropdown.js"></script>
+    <script src="/javascripts/partials/L-sidebar.js"></script>
+    <script src="/javascripts/partials/R-sidebar.js"></script>
+    <script src="/javascripts/partials/composeBtn.js"></script>
+    <script src="/javascripts/chevron.js"></script>
+    <script src="/javascripts/fileIcons.js"></script>
+    <script src="/javascripts/renderFileItem.js"></script>
+    <script src="/javascripts/progressBar.js"></script>
+    <script src="/javascripts/uploadHandler.js"></script>
+    <script src="/javascripts/driveManager.js"></script>
+    <script src="/javascripts/selection/selectionStore.js"></script>
+    <script src="/javascripts/selection/selectionUi.js"></script>
+    <script src="/javascripts/selection/selectionController.js"></script>
+    <script src="/javascripts/partials/renamePopup.js"></script>
+    <script src="/javascripts/menu/menuActionHandler.js"></script>
+    <script src="/javascripts/menu/menuActions.js"></script>
+    <script src="/javascripts/menu/contextMenu.js"></script>
+    <script src="/javascripts/menu/dotsMenu.js"></script>
+    <script src="/javascripts/menu/optionBar.js"></script>
+    <script src="/javascripts/partials/renamePopup.js"></script>
+    <script src="/javascripts/menu/menuPolicy.js"></script>
+    <script src="/javascripts/menu/menuPopper.js"></script>
+    <script src="/javascripts/menu/fileSortMenu.js"></script>
+    <script src="/javascripts/partials/search.js"></script>
+    <script src="/javascripts/filePreview.js"></script>
+  </body>
+</html>

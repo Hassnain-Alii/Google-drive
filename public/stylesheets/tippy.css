@@ -1,0 +1,11 @@
+
+  .tippy-box[data-theme~='translucent'] .tippy-content {
+    background-color: #3333;
+    /* dark background */
+    color: white;
+    /* white text */
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    font-size: 14px;
+  padding: 5px 10px;
+}

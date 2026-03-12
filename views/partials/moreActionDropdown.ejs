@@ -1,0 +1,182 @@
+<template id="more-action-dropdown-menu">
+  <div class="more-action-dropdown dropdown-menu" role="menu">
+    <ul class="more-action-dropdown-list">
+      <div class="menu-section default-view">
+        <li class="more-action-dropdown-item file-open" data-action="open">
+          <svg viewBox="0 0 24 24">
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2.5"
+              d="M4 8.5V4m0 0h4.5M4 4l5.5 5.5m10.5-1V4m0 0h-4.5M20 4l-5.5 5.5M4 15.5V20m0 0h4.5M4 20l5.5-5.5m10.5 1V20m0 0h-4.5m4.5 0l-5.5-5.5"
+            />
+          </svg>
+
+          <div class="more-action-dropdown-item-title">
+            <span>Open</span>
+          </div>
+        </li>
+        <hr />
+
+        <li
+          class="more-action-dropdown-item file-download"
+          data-action="download"
+        >
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M4 15h2v3h12v-3h2v3c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2m11.59-8.41L13 12.17V4h-2v8.17L8.41 9.59 7 11l5 5 5-5-1.41-1.41z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span> Download </span>
+          </div>
+        </li>
+        <li class="more-action-dropdown-item file-rename" data-action="rename">
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M18.41 5.8L17.2 4.59c-.78-.78-2.05-.78-2.83 0l-2.68 2.68L3 15.96V20h4.04l8.74-8.74l2.63-2.63c.79-.78.79-2.05 0-2.83zM6.21 18H5v-1.21l8.66-8.66l1.21 1.21L6.21 18zM11 20l4-4h6v4H11z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span> Rename </span>
+          </div>
+        </li>
+        <li class="more-action-dropdown-item file-copy" data-action="copy">
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M6 19V1h9l6 6v12H6Zm8-11V3H8v14h11V8h-5ZM2 23V7h2v14h11v2H2ZM8 3v5v-5v14V3Z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span> Make a copy </span>
+          </div>
+        </li>
+        <div class="menu-section starred-view">
+          <li class="more-action-dropdown-item file-starred" data-action="star">
+            <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+              <path
+                d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+              />
+            </svg>
+            <div class="more-action-dropdown-item-title">
+              <span>Add to Starred</span>
+            </div>
+          </li>
+        </div>
+
+        <hr />
+
+        <li class="more-action-dropdown-item file-share" data-action="share">
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M9 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 7c-2.67 0-8 1.34-8 4v3h16v-3c0-2.66-5.33-4-8-4zm6 5H3v-.99C3.2 16.29 6.3 15 9 15s5.8 1.29 6 2v1zm3-4v-3h-3V9h3V6h2v3h3v2h-3v3h-2z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Share</span>
+          </div>
+        </li>
+        <li
+          class="more-action-dropdown-item file-organize has-submenu"
+          data-action="organize"
+          data-menu="organize-dropdown-menu"
+        >
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M6.1 10L4 18V8h17a2 2 0 0 0-2-2h-7l-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h15c.9 0 1.7-.6 1.9-1.5l2.3-8.5H6.1M19 18H6l1.6-6h13L19 18Z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Organize</span>
+          </div>
+          <div class="submenu">
+            <ul class="submenu-list">
+              <li
+                class="more-action-dropdown-item file-move submenu-item disabled-item"
+              >
+                <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+                  <path fill="none" d="M0 0h24v24H0V0z" />
+                  <path
+                    d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10zm-8.01-9l-1.41 1.41L12.16 12H8v2h4.16l-1.59 1.59L11.99 17 16 13.01 11.99 9z"
+                  />
+                </svg>
+                <div class="more-action-dropdown-item-title">
+                  <span>Move</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+        <li class="more-action-dropdown-item file-info" data-action="info">
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <g
+              fill="none"
+              stroke="#000000"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                stroke-width="1.5"
+                d="M12 21.5a9.5 9.5 0 1 0 0-19a9.5 9.5 0 0 0 0 19m.005-4.222v-6.333"
+              />
+              <path stroke-width="2" d="M11.956 7.443h.01" />
+            </g>
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Folder information</span>
+          </div>
+        </li>
+        <hr />
+
+        <li class="more-action-dropdown-item file-trash" data-action="trash">
+          <svg
+            viewBox="0 0 24 24"
+            focusable="false"
+            fill="currentColor"
+            data-tooltip="Move to bin (Delete)"
+          >
+            <path d="M0 0h24v24H0V0z" fill="none" />
+            <path
+              d="M15 4V3H9v1H4v2h1v13c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6h1V4h-5zm2 15H7V6h10v13zM9 8h2v9H9zm4 0h2v9h-2z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Move to bin</span>
+            <span>Delete</span>
+          </div>
+        </li>
+      </div>
+
+      <div class="menu-section bin-view" style="display: none">
+        <li
+          class="more-action-dropdown-item file-restore"
+          data-action="restore"
+        >
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89l.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7s-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54l.72-1.21l-3.5-2.08V8H12z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Restore</span>
+          </div>
+        </li>
+        <li
+          class="more-action-dropdown-item file-delete-forever"
+          data-action="deleteForever"
+        >
+          <svg viewBox="0 0 24 24" focusable="false" fill="currentColor">
+            <path
+              d="m9.4 16.5l2.6-2.6l2.6 2.6l1.4-1.4l-2.6-2.6L16 9.9l-1.4-1.4l-2.6 2.6l-2.6-2.6L8 9.9l2.6 2.6L8 15.1l1.4 1.4ZM7 21q-.825 0-1.413-.588T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.588 1.413T17 21H7ZM17 6H7v13h10V6ZM7 6v13V6Z"
+            />
+          </svg>
+          <div class="more-action-dropdown-item-title">
+            <span>Delete forever</span>
+          </div>
+        </li>
+      </div>
+    </ul>
+  </div>
+</template>

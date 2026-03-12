@@ -1,0 +1,143 @@
+<aside class="sidebar">
+  <div class="l-sdb">
+    <div class="l-sdb-compose">
+      <button
+        class="l-sdb-new-btn dropdown-trigger"
+        data-tooltip="New"
+        aria-label="Create new item"
+        aria-haspopup="true"
+        aria-expanded="false"
+        data-menu="compose-btn-dropdown"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="new-icon">
+          <path d="M20 13h-7v7h-2v-7H4v-2h7V4h2v7h7v2z" />
+        </svg>
+        <span>New</span>
+      </button>
+      <%- include("../partials/composeBtn.ejs") %>
+    </div>
+    <div class="l-sdb-options">
+      <nav class="l-sdb-nav" role="navigation" aria-label="Main Navigation">
+        <ul class="l-sdb-ul">
+          <!-- Home -->
+          <li class="l-sdb-li-item <%= path==='/drive/home' ? 'active' : '' %>">
+            <a
+              class="l-sdb-li-item-a l-sdb-item-hover"
+              href="/drive/home"
+              aria-current="page"
+            >
+              <svg class="l-sdb-li-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 3L4 9v12h16V9l-8-6zm6 16h-3v-6H9v6H6v-9l6-4.5 6 4.5v9z"
+                />
+              </svg>
+              <span>Home</span>
+            </a>
+          </li>
+          <li
+            class="l-sdb-li-item <%= path==='/drive/my-drive' ? 'active' : '' %>"
+          >
+            <a class="l-sdb-li-item-a" href="/drive/my-drive">
+              <svg class="l-sdb-li-icon folder" viewBox="0 0 24 24">
+                <path
+                  d="M9.05 15H15q.275 0 .5-.137.225-.138.35-.363l1.1-1.9q.125-.225.1-.5-.025-.275-.15-.5l-2.95-5.1q-.125-.225-.35-.363Q13.375 6 13.1 6h-2.2q-.275 0-.5.137-.225.138-.35.363L7.1 11.6q-.125.225-.125.5t.125.5l1.05 1.9q.125.25.375.375T9.05 15Zm1.2-3L12 9l1.75 3ZM3 17V4q0-.825.587-1.413Q4.175 2 5 2h14q.825 0 1.413.587Q21 3.175 21 4v13Zm2 5q-.825 0-1.413-.587Q3 20.825 3 20v-1h18v1q0 .825-.587 1.413Q19.825 22 19 22Z"
+                ></path>
+              </svg>
+              <span>My Drive</span></a
+            >
+          </li>
+
+          <!-- All other top-level items … -->
+          <li
+            class="l-sdb-li-item <%= path==='/drive/computers' ? 'active' : '' %>"
+          >
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/computers"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M4 6h18V4H4c-1.1 0-2 .9-2 2v11H0v3h14v-3H4V6zm19 2h-6c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h6c.55 0 1-.45 1-1V9c0-.55-.45-1-1-1zm-1 9h-4v-7h4v7z"
+                /></svg
+              ><span>Computers</span></a
+            >
+          </li>
+          <li
+            class="l-sdb-li-item <%= path==='/drive/shared-with-me' ? 'active' : '' %>"
+          >
+            <a
+              class="l-sdb-li-item-a l-sdb-item-hover"
+              href="/drive/shared-with-me"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M15 8c0-1.42-.5-2.73-1.33-3.76.42-.14.86-.24 1.33-.24 2.21 0 4 1.79 4 4s-1.79 4-4 4c-.43 0-.84-.09-1.23-.21-.03-.01-.06-.02-.1-.03A5.98 5.98 0 0 0 15 8zm1.66 5.13C18.03 14.06 19 15.32 19 17v3h4v-3c0-2.18-3.58-3.47-6.34-3.87zM9 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm0 9c2.67 0 8 1.34 8 4v3H1v-3c0-2.66 5.33-4 8-4z"
+                /></svg
+              ><span>Shared with me</span></a
+            >
+          </li>
+          <li
+            class="l-sdb-li-item <%= path==='/drive/recent' ? 'active' : '' %>"
+          >
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/recent"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13h-1v6l5.25 3.15.75-1.23-4.5-2.67z"
+                /></svg
+              ><span>Recent</span></a
+            >
+          </li>
+          <li
+            class="l-sdb-li-item <%= path==='/drive/starred' ? 'active' : '' %>"
+          >
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/starred"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                /></svg
+              ><span>Starred</span></a
+            >
+          </li>
+          <li class="l-sdb-li-item <%= path==='/drive/spam' ? 'active' : '' %>">
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/spam"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M15.73 3H8.27L3 8.27v7.46L8.27 21h7.46L21 15.73V8.27L15.73 3zM12 17a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm1-4h-2V7h2v6z"
+                /></svg
+              ><span>Spam</span></a
+            >
+          </li>
+          <li class="l-sdb-li-item <%= path==='/drive/bin' ? 'active' : '' %>">
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/bin"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                /></svg
+              ><span>Bin</span></a
+            >
+          </li>
+          <li
+            class="l-sdb-li-item <%= path==='/drive/storage' ? 'active' : '' %>"
+          >
+            <a class="l-sdb-li-item-a l-sdb-item-hover" href="/drive/storage"
+              ><svg class="l-sdb-li-icon" viewBox="0 0 24 24">
+                <path
+                  d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h.71C7.37 7.69 9.48 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3s-1.34 3-3 3z"
+                /></svg
+              ><span>Storage</span></a
+            >
+          </li>
+          <li class="l-sdb-li-item <%= path==='/drive/' ? 'active' : '' %>">
+            <div class="quota-widget">
+              <div class="quota-bar">
+                <div class="quota-used" style="width: 20%"></div>
+              </div>
+              <a class="quota-text" href="#storage">30.1 MB of 15 GB used</a>
+              <a
+                class="quota-upgrade"
+                href="https://one.google.com/dynamic-plans?i=m&utm_source=drive&utm_medium=web&utm_campaign=g1_widget_normal#upgrade"
+                >Get more storage</a
+              >
+            </div>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</aside>

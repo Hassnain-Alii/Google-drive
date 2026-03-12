@@ -1,0 +1,46 @@
+.compose-btn-dropdown.dropdown-menu {
+  position: absolute;
+  top: 65px; /* Update this to position below the New button */
+  left: 10px;
+  width: 300px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 4px 0;
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
+    0 2px 6px 2px rgba(60, 64, 67, 0.15);
+  z-index: 1002; /* Higher than other dropdowns */
+}
+
+/* Style the menu items */
+.dropdown-menu .compose-btn-dropdown-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu .compose-btn-dropdown-menu-item {
+  padding: 5px 10px;
+}
+.dropdown-menu .compose-btn-dropdown-menu-item * {
+  cursor: pointer;
+}
+
+.compose-btn-dropdown-menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #3c4043;
+  border-radius: 4px;
+}
+
+.compose-btn-dropdown-menu-link:hover {
+  background-color: #f1f3f4;
+}
+
+.compose-btn-dropdown-menu-icon {
+  width: 20px;
+  height: 20px;
+}

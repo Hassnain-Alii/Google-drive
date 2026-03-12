@@ -1,0 +1,54 @@
+.option-bar.action-bar {
+  position: relative;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 12px;
+  background-color: #f0f4f9;
+  padding: 5px 10px;
+  border-radius: 25px;
+  z-index: 102;
+  margin-left: 2px;
+}
+
+.option-bar.action-bar * {
+  background-color: #f0f4f9;
+}
+
+.option-bar .option-bar-btn {
+  border: none;
+  outline: none;
+  padding: 7px;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.option-bar .option-bar-btn svg {
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+}
+
+.option-bar .option-bar-btn:hover {
+  background-color: #dfdfdf;
+}
+.option-bar .option-bar-btn:hover * {
+  background-color: #dfdfdf;
+}
+.option-bar-more-action-btn ~ .more-action-dropdown.dropdown-menu {
+  left: 370px;
+  z-index: 101;
+}
+.option-bar.action-bar.none {
+  display: none;
+}
+.disabled-item {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}

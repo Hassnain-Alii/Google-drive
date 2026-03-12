@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signing Up - Basic Information</title>
+  <link rel="stylesheet" href="/stylesheets/signInPages/signinBasicInfo.css">
+  <link rel="stylesheet" href="../../stylesheets/dropdown.css">
+</head>
+
+<body>
+  <main>
+    <div class="signin-container">
+      <div class="signin-container-content">
+        <div class="signin-container-content-header">
+          <div class="g-wrap">
+            <svg class="google-g" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#4285F4" d="M39.2 24.45c0-1.55-.16-3.04-.43-4.45H20v8h10.73c-.45 2.53-1.86 4.68-4 6.11v5.05h6.5c3.78-3.48 5.97-8.62 5.97-14.71z" />
+              <path fill="#34A853" d="M20 44c5.4 0 9.92-1.79 13.24-4.84l-6.5-5.05C24.95 35.3 22.67 36 20 36c-5.19 0-9.59-3.51-11.15-8.23h-6.7v5.2C5.43 39.51 12.18 44 20 44z" />
+              <path fill="#FABB05" d="M8.85 27.77c-.4-1.19-.62-2.46-.62-3.77s.22-2.58.62-3.77v-5.2h-6.7C.78 17.73 0 20.77 0 24s.78 6.27 2.14 8.97l6.71-5.2z" />
+              <path fill="#E94235" d="M20 12c2.93 0 5.55 1.01 7.62 2.98l5.76-5.76C29.92 5.98 25.39 4 20 4 12.18 4 5.43 8.49 2.14 15.03l6.7 5.2C10.41 15.51 14.81 12 20 12z" />
+            </svg>
+          </div>
+          <div class="signin-header-titles">
+            <p class="signin-header-signin-title"><span>Basic information</span></p>
+            <p class="signin-header-continue-title"><span>Enter your birthday and gender</span></p>
+          </div>
+        </div>
+        <div class="signin-container-content-form">
+          <div class="signin-form-container">
+            <form class="signin-form" js-ajax action="/users/signin/basicInfo" method="POST" autocomplete="off" novalidate>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+              <div class="signin-form-inputs">
+                <div class="birth-date">
+                  <div class="birth-date-container">
+                    <div class="custom-select birth-month input-field">
+                      <select id="birth-month" name="birthMonth" data-for="birthMonth" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                      </select>
+                      <span class="signin-form-input-label input-label">Month</span>
+                      <svg class="signin-form-chevron chevron-down-up" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 8l5 5 5-5z" />
+                      </svg>
+                    </div>
+
+                    <div class="signin-form-input birth-day">
+                      <input class="input" type="number" id="birthDay" name="birthDay" data-for="birthDay" min="1" max="31" required placeholder=" ">
+                      <span class="signin-form-input-label input-label">Day</span>
+                    </div>
+
+                    <div class="signin-form-input birth-year">
+                      <input class="input" type="number" id="birthYear" name="birthYear" data-for="birthYear" min="1900" max="2025" required placeholder=" ">
+                      <span class="signin-form-input-label input-label">Year</span>
+                    </div>
+                  </div>
+                  <div class="signin-form-input-errors">
+                    <span class="input-error" data-for="birthMonth" style="display:none">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 13H9v-2h2v2zm0-4H9V5h2v4z" />
+                      </svg>
+                      <span class="msg-text"></span>
+                    </span>
+                    <span class="input-error" data-for="birthDay" style="display:none">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 13H9v-2h2v2zm0-4H9V5h2v4z" />
+                      </svg>
+                      <span class="msg-text"></span>
+                    </span>
+                    <span class="input-error" data-for="birthYear" style="display:none">
+                      <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 13H9v-2h2v2zm0-4H9V5h2v4z" />
+                      </svg>
+                      <span class="msg-text"></span>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="signin-form-gender-container ">
+                  <div class=" input-field">
+                    <div class="custom-select gender-select chevron-btn ">
+                      <select id="gender" name="gender" data-for="gender" required>
+                        <option value="" disabled selected hidden></option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <span class="signin-form-input-label input-label">Gender</span>
+                      <svg class="signin-form-chevron chevron-down-up" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 8l5 5 5-5z" />
+                      </svg>
+                    </div>
+                    <div class="gender-helper">
+                      <span>This won't be part of your public profile.</span>
+                    </div>
+                    <div class="signin-form-input-errors">
+                      <span class="input-error " data-for="gender" style="display:none">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10 0a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 13H9v-2h2v2zm0-4H9V5h2v4z" />
+                        </svg>
+                        <span class="msg-text"></span>
+
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="signin-container-content-form-nav">
+                  <button type="submit" class="next-btn">Next</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="signin-footer">
+      <language-selector class="language-selector">
+        <select name="language" id="language">
+          <option value="en">English (Untitled States)</option>
+          <option value="vi">Tiếng Việt</option>
+        </select>
+      </language-selector>
+      <div class="signin-footer-links">
+        <a href="https://support.google.com">Help</a>
+        <a href="https://policies.google.com/terms?gl=en-US">Terms</a>
+        <a href="https://policies.google.com/privacy?gl=en-US">Privacy</a>
+      </div>
+    </div>
+
+  </main>
+  <script src="../../javascripts/dropdown.js"></script>
+  <script src="../../javascripts/chevron.js"></script>
+  <script src="../../javascripts/ajaxFormSubmit.js"></script>
+
+</body>
+
+</html>

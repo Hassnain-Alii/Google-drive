@@ -1,0 +1,99 @@
+.new-folder-popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.new-folder-popup-content {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  padding: 20px 24px;
+}
+
+.new-folder-popup-header {
+  padding: 5px 0 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.new-folder-popup-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+.new-folder-popup-close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #5f6368;
+}
+
+.new-folder-popup-body {
+  padding: 10px 0 30px 0;
+}
+
+.new-folder-popup-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  outline: none;
+}
+
+.new-folder-popup-input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+.new-folder-popup-buttons {
+  padding: 0 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.new-folder-popup-cancel,
+.new-folder-popup-save {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 30px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.new-folder-popup-cancel {
+  background: transparent;
+  color: #1a73e8;
+}
+
+.new-folder-popup-save {
+  background: #1a73e8;
+  color: white;
+}
+
+.new-folder-popup-save:hover {
+  background: #1669c1;
+}
+
+.new-folder-popup.open {
+  opacity: 1;
+  pointer-events: auto;
+}
