@@ -45,6 +45,27 @@ services:
     volumes:
       - minio_data:/data
 
+  # app:
+  #   build: .
+  #   container_name: gdrive-app
+  #   restart: unless-stopped
+  #   ports:
+  #     - "4000:4000"
+  #   environment:
+  #     - NODE_ENV=production
+  #     - DB_URL=mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017
+  #     - REDIS_HOST=redis
+  #     - REDIS_PORT=6379
+  #     - MINIO_ENDPOINT=http://minio:9000
+  #     - MINIO_ACCESS_KEY=${MINIO_USER}
+  #     - MINIO_SECRET_KEY=${MINIO_PASS}
+  #     - SESSION_SECRET=${SESSION_SECRET}
+  #     - JWT_KEY=${JWT_KEY}
+  #   depends_on:
+  #     - mongo
+  #     - redis
+  #     - minio
+
 volumes:
   mongo_data:
   redis_data:

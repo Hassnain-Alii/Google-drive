@@ -49,6 +49,7 @@
             <p><span>Welcome to Drive</span></p>
           </div>
           <div class="content-container">
+            <div id="context-menu-anchor" style="position: fixed; width: 1px; height: 1px; pointer-events: none; z-index: -1;"></div>
             <%- include('partials/optionBar.ejs') %> <%-
             include('partials/moreActionDropdown.ejs') %>
 
@@ -70,7 +71,7 @@
               </div>
               <ul class="sugg-fold-list sugg-fold-hide">
 
-              </ul>
+                           </ul> 
             </div>
             <div class="sugg-file sugg">
               <div class="sugg-file-btn sugg-btn-div">

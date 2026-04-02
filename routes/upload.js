@@ -11,7 +11,7 @@ const isLoggedIn = require("../middlewares/isLoggedIn");
 const { invalidateCache } = require("../utils/cache");
 
 router.post("/file", isLoggedIn, (req, res, next) => {
-  upload.single("file")(req, res, (err) => {
+  upload.array("files")(req, res, (err) => {
     if (err) {
       console.error("Multer file upload error:", err);
       return res.status(500).json({ error: err.message || "File upload failed in multer" });
@@ -19,31 +19,32 @@ router.post("/file", isLoggedIn, (req, res, next) => {
     next();
   });
 }, async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: "No file provided" });
-  console.log("Uploaded file info:", req.file);
+  if (!req.files || req.files.length === 0) return res.status(400).json({ error: "No files provided" });
+  console.log("Uploaded files info:", req.files);
   const userId = req.session.userId;
-  console.log("UserId from session:", userId);
   if (!userId) return res.status(401).json({ error: "Unauthorized" });
 
-  const checksum = await computeChecksum(req.file.key);
+  const uploadedDocs = [];
+  for (const file of req.files) {
+    const checksum = await computeChecksum(file.key);
+    const doc = await createFileDoc({
+      userId: req.session.userId,
+      parentId: req.body.parent || "my-drive",
+      size: file.size,
+      mimeType: file.mimetype,
+      originalname: file.originalname,
+      s3Key: file.key,
+      checksum,
+    });
+    uploadedDocs.push(doc.toObject ? doc.toObject() : doc);
+  }
 
-  const doc = await createFileDoc({
-    userId: req.session.userId,
-    parentId: req.body.parent || "my-drive",
-    size: req.file.size,
-    mimeType: req.file.mimetype,
-    originalname: req.file.originalname,
-    s3Key: req.file.key,
-    checksum,
-  });
-  console.log("Uploaded file doc:", doc);
-
-  // Invalidate cache so the file appears immediately
+  // Invalidate cache so the files appear immediately
   await invalidateCache(req.session.userId);
 
   res.json({
-    message: "File uploaded successfully",
-    file: doc.toObject ? doc.toObject() : doc,
+    message: "Files uploaded successfully",
+    files: uploadedDocs,
   });
 });
 router.post(

@@ -8,8 +8,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const createSuggFolderItem = (folder) => {
     const li = document.createElement("li");
     li.className = "sugg-fold-list-item";
+    li.dataset.fileId = folder._id;
+    li.dataset.type = "folder";
+    li.dataset.name = folder.name;
+
     li.innerHTML = `
-                            <li class="sugg-fold-list-item">
                   <button class="fold-btn option-bar-button">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                       <g>
@@ -36,7 +39,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                         d="M10 6c.82 0 1.5-.68 1.5-1.5S10.82 3 10 3s-1.5.67-1.5 1.5S9.18 6 10 6zm0 5.5c.82 0 1.5-.68 1.5-1.5s-.68-1.5-1.5-1.5-1.5.68-1.5 1.5.68 1.5 1.5 1.5zm0 5.5c.82 0 1.5-.67 1.5-1.5 0-.82-.68-1.5-1.5-1.5s-1.5.68-1.5 1.5c0 .83.68 1.5 1.5 1.5z"
                       />
                     </svg>
-                  </button>`;
+                  </button>
+               `;
+
+    li.querySelector(".fold-btn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      // Deselect others
+      document.querySelectorAll(".sugg-fold-list-item").forEach((item) => {
+        item.classList.remove("active");
+      });
+      li.classList.add("active");
+    });
 
     li.querySelector(".fold-btn").ondblclick = () => {
       location.href = `/drive/my-drive/folder/${folder._id}`;
@@ -44,6 +57,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     return li;
   };
 
+  // Add click listener to document for deselecting folders when clicking away
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".sugg-fold-list-item")) {
+      document.querySelectorAll(".sugg-fold-list-item.active").forEach((el) => {
+        el.classList.remove("active");
+      });
+    }
+  });
   async function loadHomeData() {
     try {
       const res = await fetch("/drive/api/home", {

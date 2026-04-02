@@ -71,6 +71,40 @@ async function uploadFolder(files, parentId) {
 
 // Progress bar UI logic has been moved to progressBar.js
 
+async function uploadFiles(files, parentId) {
+  const form = new FormData();
+  for (const file of files) {
+    form.append("files", file);
+  }
+  if (parentId) form.append("parent", parentId);
+
+  const progressId = showProgressBar(`${files.length} files`, Array.from(files).reduce((s, f) => s + f.size, 0));
+
+  try {
+    const res = await fetch("/upload/file", {
+      method: "POST",
+      body: form,
+      credentials: "include",
+      headers: {
+        "csrf-token": csrfToken,
+      },
+    });
+    const data = await res.json();
+    if (res.ok && data.files) {
+      updateProgressBar(progressId, 100);
+      setTimeout(() => {
+        hideProgressBar(progressId);
+      }, 500);
+      return data.files;
+    } else {
+      throw new Error(data.message || "Files upload failed");
+    }
+  } catch (err) {
+    console.error("Files upload failed:", err);
+    updateProgressBar(progressId, 0, true);
+  }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
   const folderUploadInput = document.getElementById("folderUploadInput");
   const fileUploadInput = document.getElementById("fileUploadInput");
@@ -83,11 +117,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     : "drive";
 
   fileUploadInput?.addEventListener("change", async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const uploadedFile = await uploadFile(file, currentFolderId);
-    if (uploadedFile) {
-      fileContainerList?.prepend(renderFileItem(uploadedFile, currentView));
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const uploadedFiles = await uploadFiles(files, currentFolderId);
+    if (uploadedFiles && Array.isArray(uploadedFiles)) {
+      uploadedFiles.forEach(file => {
+        fileContainerList?.prepend(renderFileItem(file, currentView));
+      });
     }
     e.target.value = "";
   });

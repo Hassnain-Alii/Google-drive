@@ -6,11 +6,15 @@ const compression = require("compression");
 const cookieParser = require("cookie-parser");
 const csrf = require("csurf");
 const helmet = require("helmet");
-const httpHttps = require("http-https");
-const morgan = require("morgan");
+const hpp = require("hpp");
+const logger = require("./utils/logger");
+const rateLimit = require("express-rate-limit");
 const session = require("express-session");
 const RedisStore = require("connect-redis")(session);
+const RLRedisStore = require("rate-limit-redis").default;
 const flash = require("connect-flash");
+const morgan = require("morgan");
+const httpHttps = require("http-https");
 const path = require("path");
 const tippy = require("tippy.js");
 const https = require("https");
@@ -32,8 +36,57 @@ const { copyFolderRecursive } = require("./utils/copyUtils");
 dotenv.config(); // must run before any code that uses process.env
 const DB_URL = require("./config/mongoose-connection");
 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'", 
+          "'unsafe-inline'", 
+          "unpkg.com", 
+          "https://unpkg.com",
+          "https://www.googletagmanager.com"
+        ],
+        styleSrc: [
+          "'self'", 
+          "'unsafe-inline'", 
+          "unpkg.com", 
+          "https://unpkg.com",
+          "https://fonts.googleapis.com"
+        ],
+        imgSrc: [
+          "'self'", 
+          "data:", 
+          "https://ssl.gstatic.com", 
+          "https://www.gstatic.com", 
+          "https://unpkg.com",
+          "https://lh3.googleusercontent.com"
+        ],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
+app.use(hpp());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: false, limit: "50mb" }));
+
+// Global Rate Limiting
+const globalLimiter = rateLimit({
+  store: new RLRedisStore({
+    sendCommand: (...args) => client.sendCommand(args),
+    prefix: "rl:global:",
+  }),
+  windowMs: 15 * 60 * 1000,
+  max: 1000, // limit each IP to 1000 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use(globalLimiter);
+
 app.use(cookieParser());
 
 async function clearOldTrash() {

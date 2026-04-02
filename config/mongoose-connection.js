@@ -3,16 +3,15 @@ const debug = require("debug")("development:mongoose");
 const config = require("config");
 
 const DB_NAME = "Google-drive-clone";
+const dbUrl = process.env.DB_URL || config.get("DB_URL") || "mongodb://localhost:27017";
+
 mongoose
-  .connect(`${config.get("DB_URL")}/${DB_NAME}?authSource=admin`)
+  .connect(`${dbUrl}/${DB_NAME}?authSource=admin`)
   .then(() => {
     debug("Connected to MongoDB");
   })
   .catch((err) => {
-    debug("Error connecting to MongoDB:", err.message);
+    debug(`Error connecting to MongoDB: ${err.message}`);
   });
-console.log(
-  "[Mongoose] About to connect to:",
-  config.get("DB_URL") + "/Google-drive-clone"
-);
+console.log(`[Mongoose] About to connect to: ${dbUrl}/${DB_NAME}`);
 module.exports = mongoose.connection;

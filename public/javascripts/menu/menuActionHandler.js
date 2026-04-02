@@ -7,6 +7,7 @@ const menuState = {
 
 function detectCurrentView() {
   const path = window.location.pathname;
+  if (path.includes("/home") || path === "/") return "home";
   if (path.includes("/starred")) return "starred";
   if (path.includes("/bin")) return "bin";
   return "default";

@@ -11,7 +11,7 @@ document.addEventListener("contextmenu", (e) => {
   const { showMenu } = popper;
 
   const fileItem = e.target.closest(
-    ".file-container-item, .sugg-file-list-item",
+    ".file-container-item, .sugg-file-list-item, .sugg-fold-list-item",
   );
   if (!fileItem) return;
 
@@ -23,7 +23,8 @@ document.addEventListener("contextmenu", (e) => {
     fileId: fileItem.dataset.fileId,
     fileName: (
       fileItem.querySelector(".file-item-container-title") ||
-      fileItem.querySelector(".sugg-file-item-title")
+      fileItem.querySelector(".sugg-file-item-title") ||
+      fileItem.querySelector(".sugg-fold-main-title")
     )?.textContent.trim(),
     isFolder: fileItem.dataset.type == "folder",
     isStarred: fileItem.dataset.starred === "true",

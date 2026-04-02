@@ -181,7 +181,7 @@ main::-webkit-scrollbar-button {
   margin-bottom: 2px;
 }
 
-.sugg-fold-main-title.active {
+.sugg-fold-list-item.active .sugg-fold-main-title {
   color: #004a77;
 }
 

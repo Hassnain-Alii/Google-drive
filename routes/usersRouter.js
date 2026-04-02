@@ -1,12 +1,7 @@
 const express = require("express");
-const { get } = require("http-https");
 const router = express.Router();
-const isLoggedin = require("../middlewares/isLoggedIn");
-const upload = require("../config/multer-config");
-const bycrypt = require("bcrypt");
+const { body } = require("express-validator");
 const { requireStep } = require("../middlewares/authStep");
-
-const usersModel = require("../models/usersModel");
 const {
   userSigninNames,
   userSigninBasicInfo,
@@ -20,7 +15,14 @@ const {
 } = require("../controllers/auth/usersLoginAuthController");
 const { authLimiter } = require("../middlewares/rateLimitAuth");
 
-router.post("/signin/names", userSigninNames);
+router.post(
+  "/signin/names",
+  [
+    body("firstName").notEmpty().withMessage("First name is required").trim().escape(),
+    body("lastName").notEmpty().withMessage("Last name is required").trim().escape(),
+  ],
+  userSigninNames
+);
 router.post(
   "/signin/basicInfo",
   requireStep("signin", "names"),

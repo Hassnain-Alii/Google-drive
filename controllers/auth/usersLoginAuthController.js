@@ -59,12 +59,16 @@ module.exports.userLoginPassword = async (req, res) => {
     req.session.save((err) => {
       if (err) console.error(err);
     });
-    const token = generateToken(user);
-    res.cookie("token", token, {
+    const { accessToken, refreshToken } = generateToken(user);
+    res.cookie("token", accessToken, {
       httpOnly: true,
-      secure: false,
-      // secure: process.env.NODE_ENV === "development",
-      maxAge: 1000 * 60 * 30, // 30 minutes
+      secure: false, // development
+      maxAge: 1000 * 60 * 15, // 15 minutes
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, // development
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
     return res.json({ redirect: "/drive/home" });
   } catch (e) {
