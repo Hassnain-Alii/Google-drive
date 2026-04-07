@@ -172,22 +172,28 @@ app.use((req, res, next) => {
 
 // Database Guard middleware function
 const dbGuard = (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    const timeout = setTimeout(() => {
-      if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({ 
-          errors: { generic: "Database not ready. Please try again in 5 seconds." } 
-        });
-      }
-    }, 5000);
-
-    mongoose.connection.once("connected", () => {
-      clearTimeout(timeout);
-      next();
-    });
-  } else {
-    next();
+  // state 1 = connected
+  if (mongoose.connection.readyState === 1) {
+    return next();
   }
+
+  console.log(`[Mongoose] Guard: Waiting for connection. Current state: ${mongoose.connection.readyState}`);
+
+  // Wait up to 15 seconds for the connection (Safe for Vercel default timeout)
+  const timeout = setTimeout(() => {
+    if (mongoose.connection.readyState !== 1) {
+      console.error("[Mongoose] Guard: Connection timed out after 15s");
+      return res.status(503).json({ 
+        errors: { generic: "Database is starting up. Please refresh in a few seconds." } 
+      });
+    }
+  }, 15000);
+
+  mongoose.connection.once("connected", () => {
+    clearTimeout(timeout);
+    console.log("[Mongoose] Guard: Connection established, proceeding.");
+    next();
+  });
 };
 
 app.use("/", dbGuard, indexRouter);
