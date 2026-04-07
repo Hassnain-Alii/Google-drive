@@ -1,8 +1,6 @@
 const { GetObjectCommand, HeadObjectCommand } = require("@aws-sdk/client-s3");
-const { minioClient } = require("../config/minio");
+const { storageClient, BUCKET_NAME } = require("../config/supabase");
 const File = require("../models/fileModel");
-
-const BUCKET_NAME = "gdrive-bucket";
 
 // STREAM FILE FOR PREVIEW
 const viewFile = async (req, res) => {
@@ -27,7 +25,7 @@ const viewFile = async (req, res) => {
     }
 
     try {
-      const headResponse = await minioClient.send(
+      const headResponse = await storageClient.send(
         new HeadObjectCommand({
           Bucket: BUCKET_NAME,
           Key: file.s3Key,
@@ -59,7 +57,7 @@ const viewFile = async (req, res) => {
           Range: `bytes=${start}-${end}`,
         };
 
-        const response = await minioClient.send(
+        const response = await storageClient.send(
           new GetObjectCommand(getObjectParams),
         );
 
@@ -77,7 +75,7 @@ const viewFile = async (req, res) => {
           Key: file.s3Key,
         };
 
-        const response = await minioClient.send(
+        const response = await storageClient.send(
           new GetObjectCommand(getObjectParams),
         );
 
@@ -126,7 +124,7 @@ const downloadFile = async (req, res) => {
         Key: file.s3Key,
       };
 
-      const response = await minioClient.send(
+      const response = await storageClient.send(
         new GetObjectCommand(getObjectParams),
       );
 

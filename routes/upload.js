@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { upload } = require("../config/minio");
+const { upload } = require("../config/supabase");
 const {
   createFileDoc,
   createFolderDoc,

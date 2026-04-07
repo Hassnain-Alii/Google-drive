@@ -1,7 +1,7 @@
 const usersModel = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
-const { minioClient } = require("../config/minio");
+const { storageClient, BUCKET_NAME } = require("../config/supabase");
 const { pwnedPassword } = require("hibp");
 
 getSettingsPage = async (req, res) => {
@@ -98,11 +98,11 @@ serveProfileImage = async (req, res) => {
     }
 
     const command = new GetObjectCommand({
-      Bucket: "gdrive-bucket",
+      Bucket: BUCKET_NAME,
       Key: user.profileImg,
     });
 
-    const s3Response = await minioClient.send(command);
+    const s3Response = await storageClient.send(command);
     res.setHeader("Content-Type", s3Response.ContentType || "image/jpeg");
     s3Response.Body.pipe(res);
   } catch (error) {

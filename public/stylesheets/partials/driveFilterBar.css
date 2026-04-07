@@ -270,3 +270,38 @@
 .open {
   display: flex;
 }
+
+@media screen and (max-width: 768px) {
+  .drive-filter-option-bar {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .drive-filter-option-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .filter-option-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .option-type-dropdown-menu.dropdown-menu,
+  .option-people-dropdown-menu.dropdown-menu,
+  .option-modified-dropdown-menu.dropdown-menu,
+  .option-source-dropdown-menu.dropdown-menu {
+    left: 10px !important; 
+    right: auto !important;
+    max-width: 90vw; /* Prevent from expanding beyond viewport */
+  }
+
+  .filter-option-modified-dropdown-lists {
+    flex-direction: column;
+  }
+  .filter-option-modified-dropdown-ul.custom-date-ul {
+    border-left: none;
+    border-top: 1px solid #ddd;
+    height: auto;
+    padding-top: 10px;
+  }
+}

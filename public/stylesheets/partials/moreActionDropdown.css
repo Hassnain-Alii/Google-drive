@@ -95,3 +95,9 @@
   pointer-events: none;
   cursor: not-allowed;
 }
+
+@media screen and (max-width: 480px) {
+  .more-action-dropdown.dropdown-menu {
+    width: 260px; /* narrowed for mobile */
+  }
+}

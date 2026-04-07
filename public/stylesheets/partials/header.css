@@ -12,6 +12,7 @@ header ~ * {
 
 .header-logo {
   width: 18%;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,7 +20,7 @@ header ~ * {
 
 .header-logo-wrap {
   padding: 0 12px;
-  width: 70%;
+  width: auto;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -132,7 +133,7 @@ header ~ * {
 }
 
 .suggestion-item-icon svg {
-  width: 75%;
+  width: auto;
   fill: #444746;
 
   height: 75%;
@@ -276,4 +277,123 @@ a {
 
 svg {
   color: #3e4140;
+}
+
+@media screen and (max-width: 1024px) {
+  .header-logo {
+    width: auto !important;
+    flex-shrink: 0;
+    padding-right: 10px;
+  }
+  .header-logo-wrap span {
+    display: none !important;
+  }
+  #mobile-sidebar-toggle {
+    display: flex !important;
+    margin-left: 5px;
+  }
+  .header-options {
+    width: auto !important;
+    flex-grow: 1;
+  }
+
+  /* Generic Main Layout Overrides */
+  main {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-radius: 0 !important;
+    padding: 10px !important;
+    height: 100vh !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .header-status-check-btn,
+  .gemini-btn {
+    display: none !important;
+  }
+
+  /* Generic File List Mobile Friendly Overrides */
+  .file-item-container-owner,
+  .file-owner-title,
+  .file-item-container-date-modified,
+  .file-date-modified-title,
+  .file-item-container-size,
+  .file-size-title,
+  .file-container-sort,
+  .file-item-container-reason-sugg,
+  .file-reason-title,
+  .file-item-container-location,
+  .file-location-title {
+    display: none !important;
+  }
+
+  .file-name-title,
+  .file-item-container-header {
+    width: 90% !important;
+  }
+  .file-container-header {
+    padding-left: 5px;
+    font-size: 0.8rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header-search-bar {
+    margin: 0 5px;
+  }
+  .drive-search-input {
+    width: 100% !important;
+    font-size: 14px;
+  }
+  .header-search-btn svg,
+  .header-adv-search-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  .header-accounts svg {
+    height: 28px;
+    width: 28px;
+  }
+  .header-logo-wrap img {
+    width: 28px;
+    height: 28px;
+    margin: 0;
+  }
+}
+
+/* GLOBAL RESPONSIVE MEDIA QUERIES */
+@media screen and (max-width: 1024px) {
+  main {
+    width: 100% !important;
+    min-width: 100% !important;
+    border-radius: 0 !important;
+  }
+}
+@media screen and (max-width: 768px) {
+  .file-item-container-owner,
+  .file-owner-title,
+  .file-item-container-date-modified,
+  .file-date-modified-title,
+  .file-item-container-size,
+  .file-size-title,
+  .file-container-sort,
+  .file-item-container-reason-sugg,
+  .file-reason-title,
+  .file-item-container-location,
+  .file-location-title {
+    display: none !important;
+  }
+  .file-name-title,
+  .file-item-container-header,
+  .file-item-container-title {
+    width: 90% !important;
+    max-width: 90% !important;
+  }
+  .file-container-header {
+    padding-left: 5px !important;
+    font-size: 0.8rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
 }

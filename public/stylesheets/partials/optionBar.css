@@ -52,3 +52,28 @@
   pointer-events: none;
   cursor: not-allowed;
 }
+
+@media screen and (max-width: 768px) {
+  .option-bar.action-bar {
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide scrollbar for clean UI */
+    -ms-overflow-style: none;
+    padding: 5px 2px;
+  }
+  .option-bar.action-bar::-webkit-scrollbar {
+    display: none;
+  }
+  .option-bar .option-bar-btn {
+    padding: 5px;
+    flex-shrink: 0;
+  }
+  .option-bar .option-bar-btn svg {
+    height: 18px;
+    width: 18px;
+  }
+  .option-bar-more-action-btn ~ .more-action-dropdown.dropdown-menu {
+    left: auto !important;
+    right: 0 !important;
+  }
+}

@@ -79,7 +79,9 @@ module.exports.userLoginPassword = async (req, res) => {
 
 module.exports.logout = async (req, res) => {
   try {
-    res.cookie("token", "");
+    res.cookie("token", "", { maxAge: 0 });
+    res.cookie("refreshToken", "", { maxAge: 0 });
+    if (req.session) req.session.destroy();
     res.redirect("/");
     console.log("logout successfully");
   } catch (error) {

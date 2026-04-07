@@ -1,4 +1,4 @@
-const { minioClient } = require("../config/minio");
+const { storageClient, BUCKET_NAME } = require("../config/supabase");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const path = require("path");
 const archiver = require("archiver");
@@ -7,10 +7,10 @@ const File = require("../models/fileModel");
 async function addFileToZip(archive, file, basePath = "") {
   try {
     const command = new GetObjectCommand({
-      Bucket: "gdrive-bucket",
+      Bucket: BUCKET_NAME,
       Key: file.s3Key,
     });
-    const s3Response = await minioClient.send(command);
+    const s3Response = await storageClient.send(command);
     archive.append(s3Response.Body, { name: path.join(basePath, file.name) });
   } catch (error) {
     console.error(`Error adding file ${file.name} to zip:`, error);

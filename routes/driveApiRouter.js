@@ -1,14 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../middlewares/isLoggedIn");
-const upload = require("../config/multer-config");
-const usersModel = require("../models/usersModel");
-const { cacheHit } = require("../utils/cache");
+const { cacheHit, registerCacheKey } = require("../utils/cache");
 const File = require("../models/fileModel");
 
-const send = async (res, key, fetcher) => {
+// Wrapper: gets from cache (or fetches from DB), registers key for fast invalidation
+const send = async (res, userId, key, fetcher) => {
   try {
-    const data = await cacheHit(key, 60, fetcher);
+    const data = await cacheHit(key, 300, fetcher);
+    registerCacheKey(userId, key); // fire-and-forget — do NOT await
     return data;
   } catch (error) {
     console.error("Cache/DB Error:", error);
@@ -22,32 +22,22 @@ router.get("/home", isLoggedIn, async (req, res) => {
     const folderKey = `home:${userId}:folders`;
     const fileKey = `home:${userId}:files`;
 
-    const suggFolderList = await send(res, folderKey, async () => {
-      const folders = await File.find({
-        owner: userId,
-        type: "folder",
-        status: "active",
-      })
-        .sort({ updatedAt: -1 })
-        .limit(5)
-        .lean();
-      return folders;
-    });
+    // Run both queries in parallel — saves time vs sequential awaits
+    const [suggFolderList, suggFileList] = await Promise.all([
+      send(res, userId, folderKey, () =>
+        File.find({ owner: userId, type: "folder", status: "active" })
+          .sort({ updatedAt: -1 })
+          .limit(5)
+          .lean()
+      ),
+      send(res, userId, fileKey, () =>
+        File.find({ owner: userId, type: "file", status: "active" })
+          .sort({ updatedAt: -1 })
+          .lean()
+      ),
+    ]);
 
-    const suggFileList = await send(res, fileKey, async () => {
-      const files = await File.find({
-        owner: userId,
-        type: "file",
-        status: "active",
-      })
-        .sort({ updatedAt: -1 })
-        .lean();
-      return files;
-    });
-
-    const response = { suggFolderList, suggFileList };
-
-    res.json(response);
+    res.json({ suggFolderList, suggFileList });
   } catch (err) {
     console.error("Error fetching home data:", err);
     res.status(500).json({ error: "Server error" });
@@ -62,75 +52,23 @@ router.get("/view", isLoggedIn, async (req, res) => {
   const key = `view:${userId}:${view}:${folderId || "root"}`;
 
   const query = {
-    home: {
-      owner: userId,
-      status: "active",
-    },
-    "my-drive": {
-      owner: userId,
-      parent: folderId || "my-drive",
-      label: { $in: ["myDrive", "recent", "starred"] },
-      status: "active",
-    },
-    computers: {
-      owner: userId,
-      parent: folderId || "my-drive",
-      label: "computer",
-      status: "active",
-    },
-    "shared-with-me": {
-      owner: userId,
-      label: "sharedWithMe",
-      status: "active",
-    },
-    recent: {
-      owner: userId,
-      label: "recent",
-      status: "active",
-    },
-    starred: {
-      owner: userId,
-      starred: true,
-      label: "starred",
-      status: "active",
-    },
-    spam: {
-      owner: userId,
-      label: "spam",
-      status: "spam",
-    },
-    bin: {
-      owner: userId,
-      label: "bin",
-      status: "trash",
-    },
-    storage: {
-      owner: userId,
-      status: "active",
-    },
+    home:             { owner: userId, status: "active" },
+    "my-drive":       { owner: userId, parent: folderId || "my-drive", label: { $in: ["myDrive", "recent", "starred"] }, status: "active" },
+    computers:        { owner: userId, parent: folderId || "my-drive", label: "computer", status: "active" },
+    "shared-with-me": { owner: userId, label: "sharedWithMe", status: "active" },
+    recent:           { owner: userId, label: "recent", status: "active" },
+    starred:          { owner: userId, starred: true, label: "starred", status: "active" },
+    spam:             { owner: userId, label: "spam", status: "spam" },
+    bin:              { owner: userId, label: "bin", status: "trash" },
+    storage:          { owner: userId, status: "active" },
   };
-  try {
-    const allUserFiles = await File.find({ owner: userId }).lean();
-    if (allUserFiles.length > 0) {
-      console.log(
-        "📄 Sample files:",
-        allUserFiles.slice(0, 5).map((f) => ({
-          name: f.name,
-          type: f.type,
-          label: f.label,
-          status: f.status,
-          parent: f.parent,
-        })),
-      );
-    }
 
-    const files = await send(res, key, async () => {
-      const result = await File.find(query[view] || query["my-drive"])
+  try {
+    const files = await send(res, userId, key, () =>
+      File.find(query[view] || query["my-drive"])
         .sort(view === "recent" ? { updatedAt: -1 } : { name: 1 })
-        .lean();
-      return result;
-    });
-    console.log("✅ Returning", files.length, "files for view:", view);
+        .lean()
+    );
 
     res.json(files);
   } catch (err) {
@@ -138,14 +76,17 @@ router.get("/view", isLoggedIn, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch files" });
   }
 });
+
 router.get("/search", isLoggedIn, async (req, res) => {
   try {
-    const query = req.query.q;
-    if (!query) return res.json([]);
+    const q = req.query.q;
+    if (!q) return res.json([]);
 
     const userId = req.session.userId;
+
+    // Use MongoDB text index (fast) instead of $regex (slow full-scan)
     const files = await File.find({
-      name: { $regex: query, $options: "i" },
+      $text: { $search: q },
       owner: userId,
       status: "active",
     }).lean();

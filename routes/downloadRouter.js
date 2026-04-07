@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
-const { minioClient } = require("../config/minio");
+const { storageClient } = require("../config/supabase");
 const { downloadAsZip } = require("../services/downloadService");
 const File = require("../models/fileModel");
 
@@ -20,7 +20,7 @@ router.get("/file/:id", async (req, res) => {
       Key: file.s3Key,
     });
 
-    const s3Response = await minioClient.send(command);
+    const s3Response = await storageClient.send(command);
 
     res.setHeader("Content-Type", file.mimeType || "application/octet-stream");
     res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`);

@@ -90,4 +90,13 @@ fileSchema.pre("save", function (next) {
   next();
 });
 
+// ─── PERFORMANCE INDEXES ────────────────────────────────────────────────────
+// Compound indexes to match the most common queries in driveApiRouter & drives
+fileSchema.index({ owner: 1, status: 1, label: 1 });   // my-drive, recent, etc
+fileSchema.index({ owner: 1, parent: 1, status: 1 });  // folder contents
+fileSchema.index({ owner: 1, starred: 1, status: 1 }); // starred view
+fileSchema.index({ owner: 1, updatedAt: -1 });          // recent sort
+fileSchema.index({ name: "text" });                     // text search
+// ────────────────────────────────────────────────────────────────────────────
+
 module.exports = mongoose.model("File", fileSchema);
