@@ -10,9 +10,13 @@ const connectionString = dbUrl
 const maskedUrl = connectionString.replace(/\/\/.*:.*@/, "//***:***@");
 console.log(`[Mongoose] Attempting connection to: ${maskedUrl}`);
 
+// Disable buffering so we see the REAL connection error immediately
+mongoose.set("bufferCommands", false);
+
 mongoose
   .connect(connectionString, {
-    connectTimeoutMS: 10000, // 10 seconds timeout
+    serverSelectionTimeoutMS: 5000, // Fail after 5 seconds instead of 10
+    connectTimeoutMS: 10000,
   })
   .then(() => {
     console.log("✅ [Mongoose] Successfully connected to MongoDB");
