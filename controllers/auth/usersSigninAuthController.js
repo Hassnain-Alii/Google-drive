@@ -14,8 +14,10 @@ module.exports.userSigninNames = async (req, res) => {
     req.session.user = { firstname, lastname };
     return res.json({ redirect: "/users/signin/basicInfo" });
   } catch (error) {
-    console.log("Names step error:", error.message);
-    return res.redirect("/signin");
+    console.error("Names step error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message }
+    });
   }
 };
 module.exports.userSigninBasicInfo = async (req, res) => {
@@ -35,8 +37,10 @@ module.exports.userSigninBasicInfo = async (req, res) => {
     req.session.gender = gender;
     return res.json({ redirect: "/users/signin/username" });
   } catch (error) {
-    console.log("Basic-info step error:", error.message);
-    return res.redirect("/users/signin/basicInfo");
+    console.error("Basic info step error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message }
+    });
   }
 };
 module.exports.userSigninUsername = async (req, res) => {
@@ -70,9 +74,11 @@ module.exports.userSigninUsername = async (req, res) => {
 
     req.session.email = email;
     return res.json({ redirect: "/users/signin/password" });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: "Server error" });
+  } catch (error) {
+    console.error("Username step error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message }
+    });
   }
 };
 module.exports.userSigninPassword = async (req, res) => {
@@ -146,10 +152,10 @@ module.exports.userSigninPassword = async (req, res) => {
       .status(201)
       .json({ message: "Account created", redirect: "/drive/home" });
   } catch (error) {
-    console.log("Password step error:", error.message);
-    return res.status(500).send({
-      message: "Internal server error",
-      redirect: "/users/signin/password",
+    console.error("Step error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message },
+      redirect: req.originalUrl,
     });
   }
 };

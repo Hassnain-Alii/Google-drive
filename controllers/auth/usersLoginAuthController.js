@@ -27,9 +27,11 @@ module.exports.userLoginEmail = async (req, res) => {
 
     req.session.email = email;
     return res.json({ redirect: "/users/login/password", email });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+  } catch (error) {
+    console.error("Login email error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message }
+    });
   }
 };
 
@@ -71,9 +73,11 @@ module.exports.userLoginPassword = async (req, res) => {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
     return res.json({ redirect: "/drive/home" });
-  } catch (e) {
-    console.error(e);
-    return res.status(500).json({ error: "Server error" });
+  } catch (error) {
+    console.error("Login password error:", error);
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + error.message }
+    });
   }
 };
 
