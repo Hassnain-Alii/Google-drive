@@ -146,18 +146,7 @@ app.use(
 
 app.use(flash());
 
-// Flash message and local variables middleware
-app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
-  res.locals.user = req.user || null;
-  res.locals.url = req.url;
-  next();
-});
-
-clearOldTrash();
-
-// Use cookie-based CSRF for better stability on Vercel
+// CSRF Protection (Cookie-based for Vercel stability)
 app.use(csrf({ 
   cookie: {
     key: "_csrf",
@@ -167,35 +156,28 @@ app.use(csrf({
   }
 }));
 
+// Consolidated locals middleware
 app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.user = req.user || null;
+  res.locals.url = req.url;
   try {
     res.locals.csrfToken = req.csrfToken();
   } catch (err) {
     res.locals.csrfToken = "";
-    console.warn("CSRF token generation failed:", err.message);
   }
-  res.locals.error = req.flash("error");
-  res.locals.success = req.flash("success");
   next();
 });
 
-app.use("/", indexRouter);
-app.use("/drive", driveRouter);
-app.use("/drive/api", driveApiRouter);
-app.use("/users", usersRouter);
-app.use("/download", downloadRouter);
-app.use("/upload", uploadRouter);
-app.use("/settings", settingsRouter);
-app.use("/drive/api/files", fileRoutes);
-
-// Database Connection Guard
-app.use((req, res, next) => {
+// Database Guard middleware function
+const dbGuard = (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
-    console.log("[Mongoose] Connection not ready. Current state:", mongoose.connection.readyState);
-    // If not connected, wait for the connection OR return an error if it's taking too long
     const timeout = setTimeout(() => {
       if (mongoose.connection.readyState !== 1) {
-        return res.status(503).json({ error: "Database not ready. Please try again in a few seconds." });
+        return res.status(503).json({ 
+          errors: { generic: "Database not ready. Please try again in 5 seconds." } 
+        });
       }
     }, 5000);
 
@@ -206,6 +188,20 @@ app.use((req, res, next) => {
   } else {
     next();
   }
+};
+
+app.use("/", dbGuard, indexRouter);
+app.use("/drive", dbGuard, driveRouter);
+app.use("/drive/api", dbGuard, driveApiRouter);
+app.use("/users", dbGuard, usersRouter);
+app.use("/download", dbGuard, downloadRouter);
+app.use("/upload", dbGuard, uploadRouter);
+app.use("/settings", dbGuard, settingsRouter);
+app.use("/drive/api/files", dbGuard, fileRoutes);
+
+// Clear old trash background job (Runs every 24h, started only after DB is ready)
+mongoose.connection.once("connected", () => {
+  clearOldTrash();
 });
 
 // Detailed Error Handler
