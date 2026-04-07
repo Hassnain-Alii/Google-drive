@@ -180,16 +180,21 @@ app.use((req, res, next) => {
 
 // Database Guard middleware function
 const dbGuard = (req, res, next) => {
+  // 1. Skip for static assets & health checks
+  if (req.url === "/favicon.ico" || req.url.startsWith("/images/") || req.url.startsWith("/stylesheets/")) {
+    return next();
+  }
+
+  // 2. Check if already connected
   if (mongoose.connection.readyState === 1) {
     return next();
   }
 
+  // 3. Wait for connection (Safe for Vercel)
   const timeout = setTimeout(() => {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({
-        errors: {
-          generic: "Database is starting up. Please refresh in a few seconds.",
-        },
+        errors: { generic: "Database is starting up. Please refresh in a few seconds." }
       });
     }
   }, 15000);
