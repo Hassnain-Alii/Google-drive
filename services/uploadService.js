@@ -1,7 +1,7 @@
 const fileModel = require("../models/fileModel");
 const path = require("path");
 const crypto = require("crypto");
-const { minioClient } = require("../config/minio");
+const { storageClient, BUCKET_NAME } = require("../config/supabase");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 
 async function createFileDoc(data) {
@@ -37,10 +37,10 @@ async function createFolderDoc(data) {
 
 async function computeChecksum(s3Key) {
   const command = new GetObjectCommand({
-    Bucket: "gdrive-bucket",
+    Bucket: BUCKET_NAME,
     Key: s3Key,
   });
-  const { Body } = await minioClient.send(command);
+  const { Body } = await storageClient.send(command);
   const hash = crypto.createHash("sha256");
   return new Promise((resolve, reject) => {
     Body.on("data", (chunk) => hash.update(chunk));

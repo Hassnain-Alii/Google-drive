@@ -27,8 +27,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return document.documentElement;
   }
 
+  // When a real drag-select happens (mouse moved > 4px), we suppress the
+  // following 'click' event so it doesn't immediately clear the selection.
+  let didDrag = false;
+
   document.addEventListener("click", (e) => {
     if (typeof SelectionStore === "undefined") return;
+
+    // Suppress the click that fires right after a drag-select ends.
+    if (didDrag) {
+      didDrag = false;
+      return;
+    }
 
     const item = e.target.closest(".file-container-item");
     if (!item) {
@@ -112,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Allow drag to start from any area within the main workspace
     const listArea = e.target.closest(
-      ".file-container, .file-content-container, .file-container-list",
+      ".file-container, .file-content-container, .file-container-list, .main-container, .content-container",
     );
     if (!listArea) return;
 
@@ -163,6 +173,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function onMouseMove(e) {
     if (!isDragging) return;
+    // Mark as a real drag once the mouse has moved more than 4px.
+    if (!didDrag) {
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        didDrag = true;
+      }
+    }
     updateSelection(e.clientX, e.clientY);
     checkForAutoScroll(e.clientX, e.clientY);
   }
@@ -178,70 +196,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!selectionBox) return;
 
-    const scrollTop =
-      currentScrollContainer === document.documentElement
-        ? window.scrollY
-        : currentScrollContainer.scrollTop;
-    const scrollLeft =
-      currentScrollContainer === document.documentElement
-        ? window.scrollX
-        : currentScrollContainer.scrollLeft;
+    // All coordinates are in viewport space (clientX/Y) because the selection
+    // box is position:fixed. No scroll-offset math needed.
+    const rawLeft = Math.min(startX, clientX);
+    const rawTop = Math.min(startY, clientY);
+    const rawRight = Math.max(startX, clientX);
+    const rawBottom = Math.max(startY, clientY);
 
-    const deltaY = scrollTop - startScrollTop;
-    const deltaX = scrollLeft - startScrollLeft;
-
-    // The virtual anchor point represents where the "click" would be in the current viewport coordinates IF it moved with the content.
-    const virtualAnchorX = startX - deltaX;
-    const virtualAnchorY = startY - deltaY;
-
-    // The raw selection area (virtual)
-    const rawLeft = Math.min(virtualAnchorX, clientX);
-    const rawTop = Math.min(virtualAnchorY, clientY);
-    const rawRight = Math.max(virtualAnchorX, clientX);
-    const rawBottom = Math.max(virtualAnchorY, clientY);
-
-    // BOX CLIPPING FOR VISUAL FEEDBACK
-    // We constrain the VISUAL box to the container's viewport so it doesn't overlap the header (Point A)
-    const containerRect =
-      currentScrollContainer === document.documentElement
-        ? {
-            top: 0,
-            bottom: window.innerHeight,
-            left: 0,
-            right: window.innerWidth,
-          }
-        : currentScrollContainer.getBoundingClientRect();
-
-    const visualLeft = Math.max(rawLeft, containerRect.left);
-    const visualTop = Math.max(rawTop, containerRect.top);
-    const visualRight = Math.min(rawRight, containerRect.right);
-    const visualBottom = Math.min(rawBottom, containerRect.bottom);
-
-    const visualWidth = Math.max(0, visualRight - visualLeft);
-    const visualHeight = Math.max(0, visualBottom - visualTop);
+    // Clamp the visual box to the viewport so it never overflows chrome
+    const visualLeft = Math.max(rawLeft, 0);
+    const visualTop = Math.max(rawTop, 0);
+    const visualRight = Math.min(rawRight, window.innerWidth);
+    const visualBottom = Math.min(rawBottom, window.innerHeight);
 
     selectionBox.style.left = `${visualLeft}px`;
     selectionBox.style.top = `${visualTop}px`;
-    selectionBox.style.width = `${visualWidth}px`;
-    selectionBox.style.height = `${visualHeight}px`;
+    selectionBox.style.width = `${Math.max(0, visualRight - visualLeft)}px`;
+    selectionBox.style.height = `${Math.max(0, visualBottom - visualTop)}px`;
 
-    // INTERSECTION LOGIC (Uses untrimmed virtual box to keep selection correct as files move)
+    // Intersect using viewport coords on both sides — getBoundingClientRect()
+    // already returns viewport-relative values, matching rawLeft/Top/Right/Bottom.
     const items = document.querySelectorAll(".file-container-item");
     const selectedIds = [];
-    const selectionRect = {
-      left: rawLeft,
-      top: rawTop,
-      right: rawRight,
-      bottom: rawBottom,
-    };
 
     items.forEach((item) => {
       const rect = item.getBoundingClientRect();
       if (
-        rect.left < selectionRect.right &&
-        rect.right > selectionRect.left &&
-        rect.top < selectionRect.bottom &&
-        rect.bottom > selectionRect.top
+        rect.left < rawRight &&
+        rect.right > rawLeft &&
+        rect.top < rawBottom &&
+        rect.bottom > rawTop
       ) {
         selectedIds.push(item.dataset.fileId);
       }
@@ -296,6 +280,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function onMouseUp() {
     isDragging = false;
+    // Note: we do NOT reset didDrag here — it must survive until the
+    // subsequent 'click' event fires (which happens just after mouseup).
     if (selectionBox) {
       selectionBox.remove();
       selectionBox = null;

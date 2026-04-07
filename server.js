@@ -21,6 +21,8 @@ const https = require("https");
 const fs = require("fs");
 const { client, redis } = require("./config/redis");
 const bcrypt = require("bcrypt");
+const { storageClient, BUCKET_NAME, DeleteObjectCommand } = require("./config/supabase");
+const File = require("./models/fileModel");
 
 const indexRouter = require("./routes/indexRouter");
 const driveRouter = require("./routes/driveRouter");
@@ -42,26 +44,26 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "unpkg.com", 
+          "'self'",
+          "'unsafe-inline'",
+          "unpkg.com",
           "https://unpkg.com",
-          "https://www.googletagmanager.com"
+          "https://www.googletagmanager.com",
         ],
         styleSrc: [
-          "'self'", 
-          "'unsafe-inline'", 
-          "unpkg.com", 
+          "'self'",
+          "'unsafe-inline'",
+          "unpkg.com",
           "https://unpkg.com",
-          "https://fonts.googleapis.com"
+          "https://fonts.googleapis.com",
         ],
         imgSrc: [
-          "'self'", 
-          "data:", 
-          "https://ssl.gstatic.com", 
-          "https://www.gstatic.com", 
+          "'self'",
+          "data:",
+          "https://ssl.gstatic.com",
+          "https://www.gstatic.com",
           "https://unpkg.com",
-          "https://lh3.googleusercontent.com"
+          "https://lh3.googleusercontent.com",
         ],
         connectSrc: ["'self'"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
@@ -69,7 +71,7 @@ app.use(
         upgradeInsecureRequests: [],
       },
     },
-  })
+  }),
 );
 app.use(hpp());
 app.use(express.json({ limit: "50mb" }));
@@ -99,7 +101,8 @@ async function clearOldTrash() {
       });
       for (const file of oldTrash) {
         if (file.s3Key) {
-          await minioClient.removeObject("gdrive-bucket", file.s3Key);
+          const command = new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: file.s3Key });
+          await storageClient.send(command);
         }
         await File.findByIdAndDelete(file._id);
         console.log(`Auto-Deleted file: ${file.name}`);
@@ -111,7 +114,11 @@ async function clearOldTrash() {
 app.use(morgan("dev"));
 app.use(compression());
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), {
+  maxAge: "7d",         // browser caches JS/CSS/images for 7 days
+  etag: true,           // enables conditional requests (304 Not Modified)
+  lastModified: true,
+}));
 app.set("view engine", "ejs");
 
 async function startServer() {
@@ -161,11 +168,16 @@ async function startServer() {
     console.log(process.env.NODE_ENV);
 
     const PORT = process.env.PORT || 4000;
-    app.listen(PORT, "0.0.0.0", () => console.log(`Server on ${PORT}`));
+    if (process.env.NODE_ENV !== "production") {
+      app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+      });
+    }
   } catch (error) {
     console.error("Error", error.message);
-    process.exit(1);
   }
 }
 
 startServer();
+
+module.exports = app;

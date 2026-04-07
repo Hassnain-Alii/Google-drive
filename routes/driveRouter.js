@@ -5,7 +5,7 @@ const upload = require("../config/multer-config");
 const usersModel = require("../models/usersModel");
 const { cacheHit, invalidateCache } = require("../utils/cache");
 const File = require("../models/fileModel");
-const { minioClient } = require("../config/minio");
+const { storageClient, BUCKET_NAME, DeleteObjectCommand } = require("../config/supabase");
 const { getCopyName, copyFolderRecursive } = require("../utils/copyUtils");
 
 router.get("/home", isLoggedIn, async (req, res) => {
@@ -184,7 +184,8 @@ router.delete("/delete-forever/:id", isLoggedIn, async (req, res) => {
     const file = await File.findById(req.params.id);
     if (!file) return res.status(404).json({ error: "File not found" });
 
-    await minioClient.removeObject("gdrive-bucket", file.s3Key);
+    const command = new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: file.s3Key });
+    await storageClient.send(command);
 
     await File.findByIdAndDelete(req.params.id);
 

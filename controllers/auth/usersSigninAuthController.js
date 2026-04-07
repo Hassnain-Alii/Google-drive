@@ -131,15 +131,27 @@ module.exports.userSigninPassword = async (req, res) => {
       email,
       password: hash,
     });
-    const token = generateToken(user);
-    res.cookie("token", token);
+    const { accessToken, refreshToken } = generateToken(user);
+    req.session.userId = user._id;
+    res.cookie("token", accessToken, {
+      httpOnly: true,
+      secure: false, // development
+      maxAge: 1000 * 60 * 15, // 15 minutes
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, // development
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    });
+
     delete req.session.user;
     delete req.session.birthDate;
     delete req.session.gender;
     delete req.session.email;
+    
     return res
       .status(201)
-      .json({ message: "Account created", redirect: "/users/login" });
+      .json({ message: "Account created", redirect: "/drive/home" });
   } catch (error) {
     console.log("Password step error:", error.message);
     return res.status(500).send({
