@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const fs = require("fs");
+const mongoose = require("mongoose");
 
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
@@ -144,6 +145,16 @@ app.use(
 );
 
 app.use(flash());
+
+// Flash message and local variables middleware
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  res.locals.user = req.user || null;
+  res.locals.url = req.url;
+  next();
+});
+
 clearOldTrash();
 
 // Use cookie-based CSRF for better stability on Vercel
@@ -176,6 +187,26 @@ app.use("/download", downloadRouter);
 app.use("/upload", uploadRouter);
 app.use("/settings", settingsRouter);
 app.use("/drive/api/files", fileRoutes);
+
+// Database Connection Guard
+app.use((req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    console.log("[Mongoose] Connection not ready. Current state:", mongoose.connection.readyState);
+    // If not connected, wait for the connection OR return an error if it's taking too long
+    const timeout = setTimeout(() => {
+      if (mongoose.connection.readyState !== 1) {
+        return res.status(503).json({ error: "Database not ready. Please try again in a few seconds." });
+      }
+    }, 5000);
+
+    mongoose.connection.once("connected", () => {
+      clearTimeout(timeout);
+      next();
+    });
+  } else {
+    next();
+  }
+});
 
 // Detailed Error Handler
 app.use((err, req, res, next) => {

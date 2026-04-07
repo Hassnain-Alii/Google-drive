@@ -4,18 +4,18 @@ const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { storageClient, BUCKET_NAME } = require("../config/supabase");
 
 
-getSettingsPage = async (req, res) => {
+const getSettingsPage = async (req, res) => {
   try {
     res.render("settings", { user: req.user });
   } catch (error) {
-    console.error("Error loading settings page:", error.message);
-    req.flash("error", "Error loading settings page");
+    console.error("❌ Error rendering settings page:", error);
     res.status(500).redirect("/somethingWentWrong");
   }
 };
 
-updateSettings = async (req, res) => {
+const updateSettings = async (req, res) => {
   try {
+    if (!req.user) throw new Error("Not authenticated");
     const userId = req.user._id;
     const {
       firstname,
@@ -28,70 +28,44 @@ updateSettings = async (req, res) => {
       confirmPassword,
     } = req.body;
 
-    const updateData = {
-      firstname,
-      lastname,
-      email,
-      gender,
-    };
+    const updateData = { firstname, lastname, email, gender };
 
-    if (birthDate) {
-      updateData.birthDate = new Date(birthDate);
-    }
+    if (birthDate) updateData.birthDate = new Date(birthDate);
+    if (req.file) updateData.profileImg = req.file.key;
 
-    // Handle profile image upload
-    if (req.file) {
-      updateData.profileImg = req.file.key; // Store the S3 key
-    }
-
-    // Handle password change if requested
     if (currentPassword || newPassword || confirmPassword) {
       if (!currentPassword || !newPassword || !confirmPassword) {
-        req.flash("error", "Current, new, and confirm password must all be filled to change password");
+        req.flash("error", "All password fields are required to change password");
         return res.redirect("/settings");
       }
 
       if (newPassword !== confirmPassword) {
-        req.flash("error", "New password and confirmation do not match");
-        return res.redirect("/settings");
-      }
-
-      if (newPassword.length < 8) {
-        req.flash("error", "Use 8 characters or more for your new password");
-        return res.redirect("/settings");
-      }
-
-      const hibp = await import("hibp");
-      const breachCount = await hibp.pwnedPassword(newPassword);
-      if (breachCount > 0) {
-        req.flash("error", "This password has appeared in data breaches – choose another");
+        req.flash("error", "Passwords do not match");
         return res.redirect("/settings");
       }
 
       const user = await usersModel.findById(userId);
       const isMatch = await bcrypt.compare(currentPassword, user.password);
-
       if (!isMatch) {
-        req.flash("error", "Current password does not match");
+        req.flash("error", "Current password is incorrect");
         return res.redirect("/settings");
       }
 
-      const salt = await bcrypt.genSalt(10);
+      const salt = await bcrypt.genSalt(12);
       updateData.password = await bcrypt.hash(newPassword, salt);
     }
 
     await usersModel.findByIdAndUpdate(userId, updateData);
-
     req.flash("success", "Profile updated successfully");
     res.redirect("/settings");
   } catch (error) {
-    console.error("Error updating settings:", error.message);
-    req.flash("error", "Failed to update settings: " + error.message);
+    console.error("❌ Error updating settings:", error);
+    req.flash("error", "Update failed: " + error.message);
     res.status(500).redirect("/settings");
   }
 };
 
-serveProfileImage = async (req, res) => {
+const serveProfileImage = async (req, res) => {
   try {
     const user = await usersModel.findById(req.params.userId);
     if (!user || !user.profileImg) {
@@ -107,7 +81,7 @@ serveProfileImage = async (req, res) => {
     res.setHeader("Content-Type", s3Response.ContentType || "image/jpeg");
     s3Response.Body.pipe(res);
   } catch (error) {
-    console.error("Error serving profile image:", error.message);
+    console.error("❌ Error serving profile image:", error.message);
     res.redirect("/images/Default-User.png");
   }
 };
