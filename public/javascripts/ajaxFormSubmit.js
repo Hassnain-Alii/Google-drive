@@ -16,13 +16,24 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       clearErrors(); // Clear errors on new submission
       const body = Object.fromEntries(new FormData(form).entries());
+      const csrfToken = body._csrf;
+
       try {
         const res = await fetch(form.action, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "X-CSRF-Token": csrfToken // Send token in headers and body
+          },
           body: JSON.stringify(body),
         });
-        const data = await safeJson(res);
+        
+        let data;
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = { error: "An unexpected error occurred. Please try again." };
+        }
 
         if (!res.ok) {
           // 400, 401, etc.

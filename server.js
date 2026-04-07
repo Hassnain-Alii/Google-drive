@@ -145,9 +145,23 @@ app.use(
 app.use(flash());
 clearOldTrash();
 
-app.use(csrf({ cookie: false }));
+// Use cookie-based CSRF for better stability on Vercel
+app.use(csrf({ 
+  cookie: {
+    key: "_csrf",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  }
+}));
+
 app.use((req, res, next) => {
-  res.locals.csrfToken = req.csrfToken();
+  try {
+    res.locals.csrfToken = req.csrfToken();
+  } catch (err) {
+    res.locals.csrfToken = "";
+    console.warn("CSRF token generation failed:", err.message);
+  }
   res.locals.error = req.flash("error");
   res.locals.success = req.flash("success");
   next();
@@ -161,6 +175,29 @@ app.use("/download", downloadRouter);
 app.use("/upload", uploadRouter);
 app.use("/settings", settingsRouter);
 app.use("/drive/api/files", fileRoutes);
+
+// Detailed Error Handler
+app.use((err, req, res, next) => {
+  if (err.code === "EBADCSRFTOKEN") {
+    return res.status(403).json({ 
+      errors: { generic: "Session expired or invalid token. Please refresh the page." } 
+    });
+  }
+  
+  console.error("Express Error:", err.stack);
+  
+  // Return JSON for AJAX, or render error page for navigation
+  if (req.xhr || (req.headers.accept && req.headers.accept.includes("json"))) {
+    return res.status(500).json({ 
+      errors: { generic: "Server Error: " + err.message } 
+    });
+  }
+  
+  res.status(500).render("errors/somethingWentWrong", { 
+    message: err.message,
+    stack: process.env.NODE_ENV === "production" ? "" : err.stack
+  });
+});
 
 console.log("Environment:", process.env.NODE_ENV);
 
