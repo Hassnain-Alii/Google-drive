@@ -29,7 +29,7 @@ module.exports.userLoginEmail = async (req, res) => {
     return res.json({ redirect: "/users/login/password", email });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Server error", err: err.message });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -62,12 +62,12 @@ module.exports.userLoginPassword = async (req, res) => {
     const { accessToken, refreshToken } = generateToken(user);
     res.cookie("token", accessToken, {
       httpOnly: true,
-      secure: false, // development
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 15, // 15 minutes
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // development
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
     return res.json({ redirect: "/drive/home" });

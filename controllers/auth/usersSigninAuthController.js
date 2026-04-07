@@ -115,14 +115,7 @@ module.exports.userSigninPassword = async (req, res) => {
       return res.status(400).json({ errors });
     }
     if (Object.keys(errors).length) return res.status(400).json({ errors });
-    console.log("Values for final check:", {
-      firstname,
-      lastname,
-      birthDate,
-      gender,
-      email,
-      password,
-    });
+    console.log("Creating user account for:", email);
     const hash = await bcrypt.hash(password, 12);
     const user = await usersModel.create({
       firstname,
@@ -136,12 +129,12 @@ module.exports.userSigninPassword = async (req, res) => {
     req.session.userId = user._id;
     res.cookie("token", accessToken, {
       httpOnly: true,
-      secure: false, // development
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 15, // 15 minutes
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      secure: false, // development
+      secure: process.env.NODE_ENV === "production",
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
     });
 
