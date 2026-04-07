@@ -20,7 +20,7 @@ const { client, redis } = require("./config/redis");
 const RedisStore = require("connect-redis")(session);
 const RLRedisStore = require("rate-limit-redis").default;
 
-const DB_URL = require("./config/mongoose-connection");
+const { connectDB } = require("./config/mongoose-connection");
 const File = require("./models/fileModel");
 const {
   storageClient,
@@ -179,30 +179,21 @@ app.use((req, res, next) => {
 });
 
 // Database Guard middleware function
-const dbGuard = (req, res, next) => {
+const dbGuard = async (req, res, next) => {
   // 1. Skip for static assets & health checks
   if (req.url === "/favicon.ico" || req.url.startsWith("/images/") || req.url.startsWith("/stylesheets/")) {
     return next();
   }
 
-  // 2. Check if already connected
-  if (mongoose.connection.readyState === 1) {
-    return next();
-  }
-
-  // 3. Wait for connection (Safe for Vercel)
-  const timeout = setTimeout(() => {
-    if (mongoose.connection.readyState !== 1) {
-      return res.status(503).json({
-        errors: { generic: "Database is starting up. Please refresh in a few seconds." }
-      });
-    }
-  }, 15000);
-
-  mongoose.connection.once("connected", () => {
-    clearTimeout(timeout);
+  try {
+    // 2. Proactively connect and wait
+    await connectDB();
     next();
-  });
+  } catch (err) {
+    return res.status(503).json({
+      errors: { generic: "Database not ready. Please try again." }
+    });
+  }
 };
 
 app.use("/", dbGuard, indexRouter);
