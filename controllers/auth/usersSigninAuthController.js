@@ -1,7 +1,6 @@
 const usersModel = require("../../models/usersModel");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../../utils/generateToken");
-const flash = require("flash");
 
 
 module.exports.userSigninNames = async (req, res) => {
