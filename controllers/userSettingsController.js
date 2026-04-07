@@ -2,7 +2,7 @@ const usersModel = require("../models/usersModel");
 const bcrypt = require("bcrypt");
 const { GetObjectCommand } = require("@aws-sdk/client-s3");
 const { storageClient, BUCKET_NAME } = require("../config/supabase");
-const { pwnedPassword } = require("hibp");
+
 
 getSettingsPage = async (req, res) => {
   try {
@@ -61,7 +61,8 @@ updateSettings = async (req, res) => {
         return res.redirect("/settings");
       }
 
-      const breachCount = await pwnedPassword(newPassword);
+      const hibp = await import("hibp");
+      const breachCount = await hibp.pwnedPassword(newPassword);
       if (breachCount > 0) {
         req.flash("error", "This password has appeared in data breaches – choose another");
         return res.redirect("/settings");

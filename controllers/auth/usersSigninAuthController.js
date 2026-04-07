@@ -2,7 +2,7 @@ const usersModel = require("../../models/usersModel");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../../utils/generateToken");
 const flash = require("flash");
-const { pwnedPassword } = require("hibp");
+
 
 module.exports.userSigninNames = async (req, res) => {
   try {
@@ -98,7 +98,8 @@ module.exports.userSigninPassword = async (req, res) => {
     // if (!/[!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(password))
     //   errors.password = "Need a special character";
 
-    const breachCount = await pwnedPassword(password);
+    const hibp = await import("hibp");
+    const breachCount = await hibp.pwnedPassword(password);
     if (breachCount > 0) {
       errors.password =
         "This password has appeared in data breaches – choose another";
