@@ -20,10 +20,13 @@ const { client, redis } = require("./config/redis");
 const RedisStore = require("connect-redis")(session);
 const RLRedisStore = require("rate-limit-redis").default;
 
-const logger = require("./utils/logger");
 const DB_URL = require("./config/mongoose-connection");
 const File = require("./models/fileModel");
-const { storageClient, BUCKET_NAME, DeleteObjectCommand } = require("./config/supabase");
+const {
+  storageClient,
+  BUCKET_NAME,
+  DeleteObjectCommand,
+} = require("./config/supabase");
 
 const indexRouter = require("./routes/indexRouter");
 const driveRouter = require("./routes/driveRouter");
@@ -33,10 +36,6 @@ const uploadRouter = require("./routes/upload");
 const downloadRouter = require("./routes/downloadRouter");
 const settingsRouter = require("./routes/settingsRouter");
 const fileRoutes = require("./routes/fileRoutes");
-
-const { copyFolderRecursive } = require("./utils/copyUtils");
-
-
 
 app.use(
   helmet({
@@ -101,7 +100,10 @@ async function clearOldTrash() {
       });
       for (const file of oldTrash) {
         if (file.s3Key) {
-          const command = new DeleteObjectCommand({ Bucket: BUCKET_NAME, Key: file.s3Key });
+          const command = new DeleteObjectCommand({
+            Bucket: BUCKET_NAME,
+            Key: file.s3Key,
+          });
           await storageClient.send(command);
         }
         await File.findByIdAndDelete(file._id);
@@ -114,11 +116,13 @@ async function clearOldTrash() {
 app.use(morgan("dev"));
 app.use(compression());
 
-app.use(express.static(path.join(__dirname, "public"), {
-  maxAge: "7d",         // browser caches JS/CSS/images for 7 days
-  etag: true,           // enables conditional requests (304 Not Modified)
-  lastModified: true,
-}));
+app.use(
+  express.static(path.join(__dirname, "public"), {
+    maxAge: "7d", // browser caches JS/CSS/images for 7 days
+    etag: true, // enables conditional requests (304 Not Modified)
+    lastModified: true,
+  }),
+);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.set("trust proxy", 1);
@@ -147,21 +151,25 @@ app.use(
 app.use(flash());
 
 // CSRF Protection (Cookie-based for Vercel stability)
-app.use(csrf({ 
-  cookie: {
-    key: "_csrf",
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-  }
-}));
+app.use(
+  csrf({
+    cookie: {
+      key: "_csrf",
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    },
+  }),
+);
 
 // Consolidated locals middleware
 app.use((req, res, next) => {
-  res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
+  // Flash messages are always arrays, ensure we have fallback
+  res.locals.success = req.flash("success") || [];
+  res.locals.error = req.flash("error") || [];
   res.locals.user = req.user || null;
   res.locals.url = req.url;
+
   try {
     res.locals.csrfToken = req.csrfToken();
   } catch (err) {
@@ -172,26 +180,22 @@ app.use((req, res, next) => {
 
 // Database Guard middleware function
 const dbGuard = (req, res, next) => {
-  // state 1 = connected
   if (mongoose.connection.readyState === 1) {
     return next();
   }
 
-  console.log(`[Mongoose] Guard: Waiting for connection. Current state: ${mongoose.connection.readyState}`);
-
-  // Wait up to 15 seconds for the connection (Safe for Vercel default timeout)
   const timeout = setTimeout(() => {
     if (mongoose.connection.readyState !== 1) {
-      console.error("[Mongoose] Guard: Connection timed out after 15s");
-      return res.status(503).json({ 
-        errors: { generic: "Database is starting up. Please refresh in a few seconds." } 
+      return res.status(503).json({
+        errors: {
+          generic: "Database is starting up. Please refresh in a few seconds.",
+        },
       });
     }
   }, 15000);
 
   mongoose.connection.once("connected", () => {
     clearTimeout(timeout);
-    console.log("[Mongoose] Guard: Connection established, proceeding.");
     next();
   });
 };
@@ -213,27 +217,27 @@ mongoose.connection.once("connected", () => {
 // Detailed Error Handler
 app.use((err, req, res, next) => {
   if (err.code === "EBADCSRFTOKEN") {
-    return res.status(403).json({ 
-      errors: { generic: "Session expired or invalid token. Please refresh the page." } 
+    return res.status(403).json({
+      errors: {
+        generic: "Session expired or invalid token. Please refresh the page.",
+      },
     });
   }
-  
+
   console.error("Express Error:", err.stack);
-  
+
   // Return JSON for AJAX, or render error page for navigation
   if (req.xhr || (req.headers.accept && req.headers.accept.includes("json"))) {
-    return res.status(500).json({ 
-      errors: { generic: "Server Error: " + err.message } 
+    return res.status(500).json({
+      errors: { generic: "Server Error: " + err.message },
     });
   }
-  
-  res.status(500).render("errors/somethingWentWrong", { 
+
+  res.status(500).render("errors/somethingWentWrong", {
     message: err.message,
-    stack: process.env.NODE_ENV === "production" ? "" : err.stack
+    stack: process.env.NODE_ENV === "production" ? "" : err.stack,
   });
 });
-
-console.log("Environment:", process.env.NODE_ENV);
 
 const PORT = process.env.PORT || 4000;
 if (process.env.NODE_ENV !== "production") {

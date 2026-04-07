@@ -6,9 +6,23 @@ const { storageClient, BUCKET_NAME } = require("../config/supabase");
 
 const getSettingsPage = async (req, res) => {
   try {
-    res.render("settings", { user: req.user });
+    const user = req.user;
+    
+    // Extra safety for Date objects during render
+    if (user && user.birthDate) {
+      const bDate = new Date(user.birthDate);
+      if (!isNaN(bDate)) {
+        user.birthDate = bDate;
+      }
+    }
+
+    res.render("settings", { 
+      user,
+      error: req.flash("error") || [],
+      success: req.flash("success") || []
+    });
   } catch (error) {
-    console.error("❌ Error rendering settings page:", error);
+    console.error("❌ CRITICAL RENDERING ERROR in /settings:", error);
     res.status(500).redirect("/somethingWentWrong");
   }
 };
@@ -17,6 +31,13 @@ const updateSettings = async (req, res) => {
   try {
     if (!req.user) throw new Error("Not authenticated");
     const userId = req.user._id;
+
+    // DIAGNOSTIC LOG
+    if (req.file) {
+      console.log("✅ Profile Upload: File received", req.file.key);
+    } else {
+      console.warn("⚠️ Profile Upload: No file received in request body!");
+    }
     const {
       firstname,
       lastname,
@@ -55,13 +76,17 @@ const updateSettings = async (req, res) => {
       updateData.password = await bcrypt.hash(newPassword, salt);
     }
 
-    await usersModel.findByIdAndUpdate(userId, updateData);
+    const updatedUser = await usersModel.findByIdAndUpdate(userId, updateData, { new: true });
+    
+    // 🔥 CRITICAL: Update the session data so req.user is current!
+    req.user = updatedUser;
+    
     req.flash("success", "Profile updated successfully");
     res.redirect("/settings");
   } catch (error) {
     console.error("❌ Error updating settings:", error);
     req.flash("error", "Update failed: " + error.message);
-    res.status(500).redirect("/settings");
+    res.redirect("/settings");
   }
 };
 

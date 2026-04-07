@@ -28,7 +28,6 @@ module.exports.userLoginEmail = async (req, res) => {
     req.session.email = email;
     return res.json({ redirect: "/users/login/password", email });
   } catch (error) {
-    console.error("Login email error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message }
     });
@@ -74,7 +73,6 @@ module.exports.userLoginPassword = async (req, res) => {
     });
     return res.json({ redirect: "/drive/home" });
   } catch (error) {
-    console.error("Login password error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message }
     });
@@ -87,10 +85,7 @@ module.exports.logout = async (req, res) => {
     res.cookie("refreshToken", "", { maxAge: 0 });
     if (req.session) req.session.destroy();
     res.redirect("/");
-    console.log("logout successfully");
   } catch (error) {
     res.redirect("/");
-    console.log("Error logging out user:", error.message);
-    res.status(500).send({ message: "Internal server error" });
   }
 };

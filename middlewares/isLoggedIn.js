@@ -101,7 +101,7 @@ module.exports = async function (req, res, next) {
         await registerCacheKey(user._id, storageCacheKey);
       }
     } catch (err) {
-      console.error("Storage measurement error:", err.message);
+      // Storage miss is non-fatal, no log needed in prod
     }
     
     res.locals.storageUsed = storageUsed;
@@ -120,7 +120,6 @@ module.exports = async function (req, res, next) {
 
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error.message);
     return res.redirect("/users/login");
   }
 };

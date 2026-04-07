@@ -14,7 +14,6 @@ module.exports.userSigninNames = async (req, res) => {
     req.session.user = { firstname, lastname };
     return res.json({ redirect: "/users/signin/basicInfo" });
   } catch (error) {
-    console.error("Names step error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message }
     });
@@ -37,7 +36,6 @@ module.exports.userSigninBasicInfo = async (req, res) => {
     req.session.gender = gender;
     return res.json({ redirect: "/users/signin/username" });
   } catch (error) {
-    console.error("Basic info step error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message }
     });
@@ -75,7 +73,6 @@ module.exports.userSigninUsername = async (req, res) => {
     req.session.email = email;
     return res.json({ redirect: "/users/signin/password" });
   } catch (error) {
-    console.error("Username step error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message }
     });
@@ -120,7 +117,6 @@ module.exports.userSigninPassword = async (req, res) => {
       return res.status(400).json({ errors });
     }
     if (Object.keys(errors).length) return res.status(400).json({ errors });
-    console.log("Creating user account for:", email);
     const hash = await bcrypt.hash(password, 12);
     const user = await usersModel.create({
       firstname,
@@ -152,7 +148,6 @@ module.exports.userSigninPassword = async (req, res) => {
       .status(201)
       .json({ message: "Account created", redirect: "/drive/home" });
   } catch (error) {
-    console.error("Step error:", error);
     return res.status(500).json({
       errors: { generic: "Server Error: " + error.message },
       redirect: req.originalUrl,

@@ -1,7 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
   const profileImgInput = document.getElementById("profileImgInput");
-  const profilePreview = document.getElementById("profile-preview");
+  const profilePreview = document.getElementById("settings-profile-preview");
   const settingsForm = document.getElementById("settings-form");
+  const changePictureBtn = document.getElementById("changePictureBtn");
+  const changePictureOverlay = document.getElementById("changePictureOverlay");
+
+  // Secure Change Picture trigger
+  if (changePictureBtn && changePictureOverlay) {
+    changePictureBtn.addEventListener("click", () => {
+      profileImgInput.click();
+    });
+    changePictureOverlay.addEventListener("click", () => {
+      profileImgInput.click();
+    });
+  }
 
   // Image preview logic
   profileImgInput.addEventListener("change", (e) => {

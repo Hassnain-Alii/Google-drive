@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!res.ok) {
           // 400, 401, etc.
-          console.log("status", res.status, "errors", data.errors);
           /* 1.  hide old messages & red borders  */
           form
             .querySelectorAll(".input-error[data-for]")

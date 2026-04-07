@@ -6,9 +6,13 @@ const usersModel = require("../models/usersModel");
 
 router.get("/", function (req, res) {
   try {
+    // If user is already logged in, redirect to home
+    if (req.session && req.session.userId) {
+      return res.redirect("/drive/home");
+    }
     res.render("loginPages/loginEmail", {});
   } catch (error) {
-    console.log("error in /", error.message);
+    res.render("loginPages/loginEmail", {});
   }
 });
 router.get("/sessionEnded", function (req, res) {

@@ -25,15 +25,12 @@ const BUCKET_NAME = process.env.STORAGE_BUCKET || "GOOGLE-DRIVE";
 async function ensureBucket() {
   try {
     await storageClient.send(new HeadBucketCommand({ Bucket: BUCKET_NAME }));
-    console.log(`Bucket "${BUCKET_NAME}" already exists.`);
   } catch (err) {
     if (err.name === "NotFound" || err.$metadata?.httpStatusCode === 404) {
-      console.log(`Bucket "${BUCKET_NAME}" not found. Creating...`);
       try {
         await storageClient.send(
           new CreateBucketCommand({ Bucket: BUCKET_NAME }),
         );
-        console.log(`Bucket "${BUCKET_NAME}" created successfully.`);
       } catch (createErr) {
         console.error(`Error creating bucket: ${createErr.message}`);
       }

@@ -1,6 +1,8 @@
 # 🚀 Google Drive Enterprise Clone (MERN)
 
-A visually stunning, high-performance, and enterprise-grade file storage and management system. This application features a highly polished design system, fluid micro-animations, and a robust security architecture, making it a state-of-the-art deployment.
+A visually stunning, high-performance, and enterprise-grade file storage and management system. Build with a highly polished design system, fluid micro-animations, and a robust security architecture.
+
+### 🌐 **[View Live Demo](https://google-drive-ecru.vercel.app)**
 
 ---
 
@@ -11,11 +13,12 @@ A visually stunning, high-performance, and enterprise-grade file storage and man
 - **"Stunning UI/UX"**: Built with a custom design system utilizing glassmorphism, dynamic gradients, and smooth transitions.
 - **"Single Upload"**: Support for individual file uploads with instant metadata synchronization to the database.
 - **"Multi-Upload & Progress"**: Parallel upload stream for multiple files with real-time UI feedback (progress bars).
-- **"Folder Support"**: Upload and browse entire directory structures recursively with ease.
+- **"Folder & Navigation"**: Upload and browse entire directory structures recursively with breadcrumb navigation.
 - **"Multi-Selection"**: Advanced selection logic supporting Ctrl/Shift clicks and drag-to-select for bulk operations.
 - **"Favorites & Starred"**: One-click system to mark important materials for quick retrieval in the "Starred" view.
 - **"Trash & Auto-Purge"**: Secure deletion system with 30-day retention and auto-permanent purge logic running via backend cron.
 - **"Real-time Search"**: Fast, indexed searching across all user-owned files and folders.
+- **"Trash & Auto-Purge"**: Secure deletion system with 30-day retention and auto-permanent purge logic.
 
 ### ⚙️ Backend & Storage (Node.js + Express)
 
@@ -42,11 +45,6 @@ We prioritize the safety of your data with an enterprise-grade security stack.
 - **What is it?**: A security middleware that scans the endpoint URL parameters.
 - **Why we use it?**: To prevent attackers from confusing the server with multiple parameters of the same name, which could potentially bypass input validation or business logic.
 
-### 3. **"Pino HTTP Logging"** 📝
-
-- **What is it?**: An extremely high-performance JSON logging library.
-- **Why we use it?**: To provide a robust audit trail of all server interactions. For security teams, it provides detailed, structured data to monitor for anomalies without sacrificing performance.
-
 ### 4. **"Express Rate Limiting"** ⏳
 
 - **What is it?**: A mechanism to limit the volume of requests a single IP can make.
@@ -70,51 +68,67 @@ We prioritize the safety of your data with an enterprise-grade security stack.
 - **What is it?**: Defense against Cross-Site Request Forgery.
 - **Why we use it?**: We use `csurf` to ensure all state-changing operations originate from our own frontend, preventing unauthorized actions on behalf of the user.
 
+### 8. **"Supabase Object Storage"** 🛡️
+
+- **What is it?**: Enterprise-grade S3-compatible infrastructure via Supabase for highly scalable file management.
+
+### 9. **"MongoDB Atlas"** 🛡️
+
+- **What is it?**: Globally distributed database for metadata and user accounts.
+
+### 10. **"Redis Caching"** 🛡️
+
+- **What is it?**: Accelerated performance for frequent data queries using Upstash Redis.
+
+### 11. **"Secure Multi-Download"** 🛡️
+
+- **What is it?**: Server-side zipping using `archiver` for bulk downloads.
+
+- **"CSRF & JWT Security"**: Robust defense against security threats using cookie-based token rotation and `csurf`.
+
 ---
 
 ## 🏗️ Technology Stack
 
-- **Backend**: Node.js, Express.js
-- **Database**: MongoDB (Mongoose)
-- **Object Storage**: MinIO (S3 Compatible)
-- **Caching**: Redis
-- **Authentication**: JWT & Session-based with Passport
 - **Frontend**: EJS, Vanilla CSS, Modern JavaScript
-- **DevOps**: Docker, Docker Compose, Caddy
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB Atlas (Mongoose)
+- **Object Storage**: Supabase (S3 Compatible)
+- **Caching**: Redis (Upstash)
+- **Deployment**: Vercel (Serverless Functions)
 
 ---
 
-## 🏛️ Infrastructure Components
+## 🚀 Deployment & Development
 
-### 1. **"Docker & Docker Compose"**
+This project is optimized for **Cloud-Native** deployment on Vercel and does not require Docker.
 
-Ensures the application runs identically on any machine. Our `docker-compose.yml` orchestrates the entire stack (Node, Mongo, Redis, MinIO) in isolated, secure networks.
+### 1. **"Cloud Orchestration"** ☁️
 
-### 2. **"Redis In-Memory Data Store"**
+We use a serverless architecture to ensure the application is always available and scales automatically:
 
-Reduces database load and speed up data retrieval. By caching file lists and sessions, we achieve near-instant response times for returning users.
+- **Vercel**: Hosts the API and Frontend.
+- **MongoDB Atlas**: Manages the persistent data.
+- **Supabase**: Handles all file and binary storage.
 
-### 3. **"MinIO Object Storage"**
+### 2. **"Local Quick Start"** 💻
 
-Handles file storage (on-disk) in a scalable, cloud-ready way. This separates binary data from metadata, keeping the database lightweight.
-
----
-
-## 🚀 Quick Start (Docker Orchestration)
-
-To spin up the entire cluster quickly:
+To run this project locally without Docker:
 
 ```bash
-# To spin up the entire cluster:
-docker-compose up -d --build
+# 1. Clone the repository
+git clone [your-repo-link]
+
+# 2. Install dependencies
+npm install
+
+# 3. Set up your .env file
+# (Contact the owner for the required DB_URL and STORAGE keys)
+
+# 4. Start the development server
+npm run dev
 ```
 
-This single command orchestrates:
+**Visit [http://localhost:4000](http://localhost:4000) to start developing!**
 
-1. **Node.js Express Server**: High-performance API server.
-2. **MongoDB Database**: Standard NoSQL data persistence.
-3. **Redis Cluster**: Accelerated data caching.
-4. **MinIO Object Store**: S3-compatible asset management.
-5. **Mongo Express**: Web-based Database Administration UI.
-
-**Open [http://localhost:4000](http://localhost:4000) and enjoy the product!**
+---

@@ -48,13 +48,13 @@
                 <form id="settings-form" action="/settings/update?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
                     <div class="settings-profile-img-section">
                         <div class="settings-profile-img-container">
-                            <img id="settings-profile-preview" src="<%= user.profileImg ? '/settings/image/' + user._id : '/images/Default-User.png' %>" alt="Profile Picture">
-                            <div class="settings-img-overlay">
+                            <img id="settings-profile-preview" src="<%= user.profileImg ? '/settings/image/' + user._id + '?v=' + encodeURIComponent(user.profileImg) : '/images/Default-User.png' %>" alt="Profile Picture">
+                            <div id="changePictureOverlay" class="settings-img-overlay">
                                 <svg viewBox="0 0 24 24"><path d="M3 4V1h2v3h3v2H5v3H3V6H0V4h3zm3 6V7h3V4h7l1.83 2H21c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H5c-1.1 0-2-.9-2-2V10h3zm7 9c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-3.2-5c0 1.77 1.43 3.2 3.2 3.2s3.2-1.43 3.2-3.2-1.43-3.2-3.2-3.2-3.2 1.43-3.2 3.2z"/></svg>
                             </div>
                             <input type="file" name="profileImg" id="profileImgInput" accept="image/*" hidden>
                         </div>
-                        <button type="button" class="btn-text" onclick="document.getElementById('profileImgInput').click()">Change Picture</button>
+                        <button type="button" id="changePictureBtn" class="btn-text">Change Picture</button>
                     </div>
 
                     <div class="settings-info-form-grid">
@@ -72,7 +72,16 @@
                         </div>
                         <div class="settings-info-form-birthDate-group settings-form-group">
                             <label for="birthDate">Date of Birth</label>
-                            <input type="date" id="birthDate" name="birthDate" value="<%= user.birthDate ? user.birthDate.toISOString().split('T')[0] : '' %>" >
+                            <% 
+                               let bDateStr = "";
+                               if (user && user.birthDate) {
+                                   const d = new Date(user.birthDate);
+                                   if (!isNaN(d.getTime())) {
+                                       bDateStr = d.toISOString().split('T')[0];
+                                   }
+                               }
+                            %>
+                            <input type="date" id="birthDate" name="birthDate" value="<%= bDateStr %>" >
                         </div>
                         <div class="settings-info-form-gender-group settings-form-group">
                             <label for="gender">Gender</label>
